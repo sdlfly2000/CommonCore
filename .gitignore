@@ -1,0 +1,6 @@
+# Exclude obj and bin
+bin/
+obj/
+
+# Exclude .vs
+.vs/
