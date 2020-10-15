@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Core.AOP", "Common.C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Core.Cache", "Common.Core.Cache\Common.Core.Cache.csproj", "{0F54C40C-4E2F-424A-9CD8-870FEDF417EF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Core.Data.Sql", "Common.Core.Data.Sql\Common.Core.Data.Sql.csproj", "{7622A592-26C2-4EAF-9F15-66DBCDF98CCA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0F54C40C-4E2F-424A-9CD8-870FEDF417EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F54C40C-4E2F-424A-9CD8-870FEDF417EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F54C40C-4E2F-424A-9CD8-870FEDF417EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7622A592-26C2-4EAF-9F15-66DBCDF98CCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7622A592-26C2-4EAF-9F15-66DBCDF98CCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7622A592-26C2-4EAF-9F15-66DBCDF98CCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7622A592-26C2-4EAF-9F15-66DBCDF98CCA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
