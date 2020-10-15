@@ -4,3 +4,7 @@ obj/
 
 # Exclude .vs
 .vs/
+
+# Exclude .pack and build folder
+.pack/
+build/
