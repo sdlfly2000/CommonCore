@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Common.Core": {
+      "commandName": "Project"
+    }
+  }
+}
