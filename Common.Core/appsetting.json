@@ -1,3 +1,4 @@
 ﻿{
-  "UploadToNuget": false 
+  "UploadToNuget": true,
+  "NugetApiKey": "oy2k6fmmcbepxkxk437antgewkuaateunikr2dwkqj6ujq"
 }

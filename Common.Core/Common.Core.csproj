@@ -23,4 +23,7 @@
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="Powershell.exe -ExecutionPolicy Bypass -Command .\Scripts\SetVersion.ps1" />
   </Target>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="Powershell.exe -ExecutionPolicy Bypass -Command .\Scripts\ToNuget.ps1" />
+  </Target>
 </Project>

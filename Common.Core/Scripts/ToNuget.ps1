@@ -5,20 +5,23 @@
 # No Parameter
 Param()
 
-# Variables
+# Variables from appsetting.json
 $appSettingFileName = "appsetting.json"
 $appSetting = (Get-Content -path $appSettingFileName) | ConvertFrom-Json
-$uploadToNuget = [bool]$appSetting.UploadToNuget
+$isUploadToNuget = [bool]$appSetting.UploadToNuget
+$nugetApiKey = [string]$appSetting.NugetApiKey
 
-if($uploadToNuget){
-	$projectFileName = "Common.Core.csproj"
-	$projectFile = [xml](Get-Content -path $projectFileName)
-	$version = $projectFile.Project.PropertyGroup.Version
+# Variables from project file
+$projectFileName = "Common.Core.csproj"
+$projectFile = [xml](Get-Content -path $projectFileName)
+$version = $projectFile.Project.PropertyGroup.Version
 
+# Push to Nuget if uploadToNuget is true
+if($isUploadToNuget){	
 	# CMD to Push Nuget
+	$cmdline = "dotnet nuget push .\bin\Debug\IdeaActivator.Common.Core.$version.nupkg --api-key $nugetApiKey --source https://api.nuget.org/v3/index.json"
 	Write-Host $cmdline
 	#CMD.exe /c $cmdline
+}else{
+	Write-Host "Package is not uploaded to Nuget."
 }
-
-
-
