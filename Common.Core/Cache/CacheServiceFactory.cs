@@ -35,6 +35,13 @@ namespace Common.Core.Cache
                     : null;
         }
 
+        public T Get<T>(string Code) where T: class
+        {
+            return isMemoryCache
+                    ? _memoryCacheProcess.Get<T>(Code)
+                    : null;
+        }
+
         public object Set(string Code, object value)
         {
             return _memoryCacheProcess.Set(Code, value);

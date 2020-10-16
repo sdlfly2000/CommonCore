@@ -18,6 +18,11 @@ namespace Common.Core.Cache.MemoryCache
             return _memoryCache.Get(Code);
         }
 
+        public T Get<T>(string Code) where T : class
+        {
+            return _memoryCache.Get<T>(Code);
+        }
+
         public object Set(string Code, object value)
         {
             return _memoryCache.Set(Code, value);
