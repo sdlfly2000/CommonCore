@@ -16,6 +16,8 @@ $projectFileName = "Common.Core.csproj"
 $projectFile = [xml](Get-Content -path $projectFileName)
 $version = $projectFile.Project.PropertyGroup.Version
 
+Write-Host "-Upload Package to Nuget-"
+
 # Push to Nuget if uploadToNuget is true
 if($isUploadToNuget){	
 	# CMD to Push Nuget

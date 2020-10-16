@@ -29,11 +29,11 @@ Write-Host "-Upgrade Version-" -foregroundcolor "magenta"
 Write-Host "Script:			.\Scripts\SetVersion.ps1"   
 Write-Host "Current Version:	"$major"."$minor"."$patch
 Write-Host "Upgraded Version:	"$major"."$minor"."$upgradedPatch
-Write-Host "UploadToNuget:		"$isUploadToNuget
+Write-Host "UploadToNuget:	"$isUploadToNuget
 
 # Save the chagne if isUploadToNuget is true.
 if($isUploadToNuget){
 	$projectFile.save($projectFileName)
-}{
-	Write-Host "Version is note upgraded."
+}else{
+	Write-Host "Version is not upgraded."
 }
