@@ -33,6 +33,16 @@ namespace Common.Core.Cache.MemoryCache
             return _memoryCache.Set(Code, value, options);
         }
 
+        public T Set<T>(string Code, T value, MemoryCacheEntryOptions options) where T:class
+        {
+            return _memoryCache.Set<T>(Code, value, options);
+        }
+
+        public T Set<T>(string Code, T value) where T : class
+        {
+            return _memoryCache.Set<T>(Code, value);
+        }
+
         public void Remove(string Code)
         {
             _memoryCache.Remove(Code);

@@ -57,6 +57,20 @@ namespace Common.Core.Cache
                 : null;
         }
 
+        public T Set<T>(string Code, T value) where T:class
+        {
+            return isMemoryCache
+                ? _memoryCacheProcess.Set<T>(Code, value)
+                : null;
+        }
+
+        public T Set<T>(string Code, T value, MemoryCacheEntryOptions options) where T: class
+        {
+            return isMemoryCache
+                ? _memoryCacheProcess.Set<T>(Code, value, options)
+                : null;
+        }
+
         public void Remove(string Code)
         {
             if (isMemoryCache) {
