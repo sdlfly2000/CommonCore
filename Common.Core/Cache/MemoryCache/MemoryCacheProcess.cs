@@ -27,5 +27,15 @@ namespace Common.Core.Cache.MemoryCache
         {
             return _memoryCache.Set(Code, value);
         }
+
+        public object Set(string Code, object value, MemoryCacheEntryOptions options)
+        {
+            return _memoryCache.Set(Code, value, options);
+        }
+
+        public void Remove(string Code)
+        {
+            _memoryCache.Remove(Code);
+        }
     }
 }

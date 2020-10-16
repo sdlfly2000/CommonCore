@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 
-namespace Common.Core.Cache.MemoryCache
+namespace Common.Core.Cache
 {
-    public interface IMemoryCacheProcess
+    public interface ICacheService
     {
         object Get(string Code);
 
@@ -10,8 +10,8 @@ namespace Common.Core.Cache.MemoryCache
 
         object Set(string Code, object value);
 
-        void Remove(string Code);
-
         object Set(string Code, object value, MemoryCacheEntryOptions options);
+
+        void Remove(string Code);
     }
 }

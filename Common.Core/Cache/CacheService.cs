@@ -1,12 +1,13 @@
 ﻿using Common.Core.Cache.MemoryCache;
 using Common.Core.Cache.Redis;
 using Common.Core.DependencyInjection;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 
 namespace Common.Core.Cache
 {
-    [ServiceLocate(typeof(ICacheServiceFactory))]
-    public class CacheServiceFactory : ICacheServiceFactory
+    [ServiceLocate(typeof(ICacheService))]
+    public class CacheService : ICacheService
     {
         private string FeatureToggleIsMemoryCache = "FeatureToggles:IsMemoryCache";
 
@@ -16,7 +17,7 @@ namespace Common.Core.Cache
 
         private bool isMemoryCache;
 
-        public CacheServiceFactory(
+        public CacheService(
             IConfiguration configuration,
             IMemoryCacheProcess memoryCacheProcess,
             IRedisCacheProcess redisCacheProcess)
@@ -44,12 +45,32 @@ namespace Common.Core.Cache
 
         public object Set(string Code, object value)
         {
-            return _memoryCacheProcess.Set(Code, value);
+            return isMemoryCache
+                ? _memoryCacheProcess.Set(Code, value)
+                : null;
         }
+
+        public object Set(string Code, object value, MemoryCacheEntryOptions options)
+        {
+            return isMemoryCache
+                ? _memoryCacheProcess.Set(Code, value, options)
+                : null;
+        }
+
+        public void Remove(string Code)
+        {
+            if (isMemoryCache) {
+                _memoryCacheProcess.Remove(Code);
+            }
+        }
+
+        #region
 
         private bool IsMemoryCache()
         {
             return bool.Parse(_configuration[FeatureToggleIsMemoryCache]);
         }
+
+        #endregion
     }
 }
