@@ -3,6 +3,7 @@ using Common.Core.Cache.Redis;
 using Common.Core.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 
 namespace Common.Core.Cache
 {
@@ -77,6 +78,13 @@ namespace Common.Core.Cache
                 _memoryCacheProcess.Remove(Code);
             }
         }
+
+        public IList<string> LoadAllKeys()
+        {
+            return isMemoryCache
+                ? _memoryCacheProcess.LoadAllKeys()
+                : null;
+        }    
 
         #region
 

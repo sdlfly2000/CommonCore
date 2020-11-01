@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using System.Collections.Generic;
 
 namespace Common.Core.Cache.MemoryCache
 {
@@ -17,5 +18,7 @@ namespace Common.Core.Cache.MemoryCache
         T Set<T>(string Code, T value, MemoryCacheEntryOptions options) where T : class;
 
         void Remove(string Code);
+
+        IList<string> LoadAllKeys();
     }
 }
