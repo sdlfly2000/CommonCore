@@ -6,11 +6,16 @@
 # No Parameter
 Param()
 
+# Get NugetKey
+Powershell.exe .\Scripts\FtpDownload.ps1
+$nugetSettingFileName = "app.json"
+$nugetSetting = (Get-Content -path $nugetSettingFileName) | ConvertFrom-Json
+$nugetApiKey = [string]$nugetSetting.NugetApiKey
+
 # Variables from appsetting.json
 $appSettingFileName = "appsetting.json"
 $appSetting = (Get-Content -path $appSettingFileName) | ConvertFrom-Json
 $isUploadToNuget = [bool]$appSetting.UploadToNuget
-$nugetApiKey = [string]$appSetting.NugetApiKey
 
 # Variables from project file
 $projectFileName = "Common.Core.csproj"
@@ -33,3 +38,6 @@ if($isUploadToNuget){
 }else{
 	Write-Host "Package is not uploaded to Nuget."
 }
+
+# Clean up
+Remove-Item ".\$nugetSettingFileName"
