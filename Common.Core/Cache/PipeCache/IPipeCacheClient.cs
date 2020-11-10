@@ -11,5 +11,7 @@ namespace Common.Core.Cache.PipeCache
         void Remove(string key);
 
         IList<string> GetAllKeys();
+
+        void SetupPipeClient(string pipeServer, string pipeName);
     }
 }
