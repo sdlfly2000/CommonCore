@@ -2,11 +2,11 @@
 
 namespace Common.Core.Cache.PipeCache
 {
-    public interface IPipeCacheClient<T> where T: class
+    public interface IPipeCacheClient
     {
-        T Get(string key);
+        T Get<T>(string key) where T: class;
 
-        T Set(string key, T value);
+        void Set<T>(string key, T value) where T : class;
 
         void Remove(string key);
 

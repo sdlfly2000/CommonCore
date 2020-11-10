@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Pipes;
+using Common.Core.Cache.Client.Utils;
+using Common.Core.Cache.PipeCache.Processes;
+using Common.Core.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace Common.Core.Cache.PipeCache
 {
-    using System.IO.Pipes;
-
-    using Common.Core.Cache.PipeCache.Processes;
-
-    public class PipeCacheClient<T> : IPipeCacheClient<T>, IDisposable where T: class
+    [ServiceLocate(typeof(IPipeCacheClient))]
+    public class PipeCacheClient : IPipeCacheClient, IDisposable
     {
-        private string PipeServer = "";
-
-        private string PipeName = "";
-
         private NamedPipeClientStream _pipeClient;
+        private static byte[] _bufferReceived = new byte[Int16.MaxValue];
 
         private readonly IPipeBufferComposeProcess _composeProcess;
 
@@ -24,41 +23,61 @@ namespace Common.Core.Cache.PipeCache
 
         public void SetupPipeClient(string pipeServer, string pipeName)
         {
-            PipeServer = pipeServer;
-            PipeName = pipeName;
-            _pipeClient = new NamedPipeClientStream(PipeServer, PipeName, PipeDirection.InOut);
+            _pipeClient = new NamedPipeClientStream(pipeServer, pipeName, PipeDirection.InOut);
             _pipeClient.Connect();
         }
 
-        public T Get(string key)
+        public T Get<T>(string key) where T: class
         {
-            var buffer = _composeProcess.ComposeGet(key);
-            if (_pipeClient.IsConnected)
-            {
-                _pipeClient.Write(buffer.AsSpan());
-                _pipeClient.Read();
-            }
+            var bufferSent = _composeProcess.ComposeGet(key);
+            var numRecv = SendAndReceive(bufferSent, _bufferReceived);
 
+            return JsonConvert.DeserializeObject<T>(ConvertTools.BytesToString(_bufferReceived.AsSpan().Slice(0,numRecv).ToArray()));
         }
 
-        public T Set(string key, T value)
+        public void Set<T>(string key, T value) where T : class
         {
-            throw new NotImplementedException();
+            var bufferSent = _composeProcess.ComposeSet(key, value);
+            _ = SendAndReceive(bufferSent, _bufferReceived);
         }
 
         public void Remove(string key)
         {
-            throw new NotImplementedException();
+            var bufferSent = _composeProcess.ComposeRemove(key);
+            _ = SendAndReceive(bufferSent, _bufferReceived);
         }
 
         public IList<string> GetAllKeys()
         {
-            throw new NotImplementedException();
+            var bufferSent = _composeProcess.ComposeGetAllKeys();
+            var numRecv = SendAndReceive(bufferSent, _bufferReceived);
+
+            return JsonConvert.DeserializeObject<IList<string>>(ConvertTools.BytesToString(_bufferReceived.AsSpan().Slice(0, numRecv).ToArray()));
         }
 
         public void Dispose()
         {
             _pipeClient?.Dispose();
+        }        
+
+        #region Private Methods
+
+        private int SendAndReceive(byte[] bufferSent, byte[] bufferRecv)
+        {
+            if (!_pipeClient.IsConnected)
+            {
+                _pipeClient.Connect();
+            }
+
+            _pipeClient.Write(bufferSent.AsSpan());
+            _pipeClient.WaitForPipeDrain();
+            var numRecv = _pipeClient.Read(bufferRecv.AsSpan());
+            _pipeClient.Close();
+
+            return numRecv;
         }
+
+        #endregion
+
     }
 }
