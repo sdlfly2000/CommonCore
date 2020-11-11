@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO.Pipes;
 
 namespace Common.Core.Cache.PipeCache
 {
@@ -12,6 +13,6 @@ namespace Common.Core.Cache.PipeCache
 
         IList<string> GetAllKeys();
 
-        void SetupPipeClient(string pipeServer, string pipeName);
+        void SetupPipeClient(NamedPipeClientStream pipe);
     }
 }

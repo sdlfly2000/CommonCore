@@ -21,10 +21,9 @@ namespace Common.Core.Cache.PipeCache
             _composeProcess = composeProcess;
         }
 
-        public void SetupPipeClient(string pipeServer, string pipeName)
+        public void SetupPipeClient(NamedPipeClientStream pipe)
         {
-            _pipeClient = new NamedPipeClientStream(pipeServer, pipeName, PipeDirection.InOut);
-            _pipeClient.Connect();
+            _pipeClient = pipe;
         }
 
         public T Get<T>(string key) where T: class
