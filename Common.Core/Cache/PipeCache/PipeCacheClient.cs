@@ -71,7 +71,6 @@ namespace Common.Core.Cache.PipeCache
             _pipeClient.Write(bufferSent.AsSpan());
             _pipeClient.WaitForPipeDrain();
             var numRecv = _pipeClient.Read(bufferRecv.AsSpan());
-            _pipeClient.Close();
 
             return numRecv;
         }
