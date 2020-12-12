@@ -21,7 +21,16 @@ namespace Common.Core.DependencyInjection
                 if (serviceLocateObject != null)
                 {
                     var iFace = (serviceLocateObject as ServiceLocateAttribute).IService;
-                    services.AddTransient(iFace, impl);
+                    var serviceType = (serviceLocateObject as ServiceLocateAttribute).ServiceType;
+                    switch (serviceType)
+                    {
+                        case ServiceType.Scoped:
+                            services.AddScoped(iFace, impl);
+                            break;
+                        default:
+                            services.AddTransient(iFace, impl);
+                            break;
+                    }                    
                 }
             }
         }
