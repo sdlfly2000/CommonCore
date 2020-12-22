@@ -5,7 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Common.Core.AOP
 {
-    public class CacheAction<T>: ICacheAction<T> where T : ICacheAspect
+    public class CacheAction<TAspect, TReference>: ICacheAction<TAspect, TReference> where TReference : IReference
     {
         private readonly IMemoryCache _memoryCache;
 
@@ -16,21 +16,18 @@ namespace Common.Core.AOP
 
         public object BeforeAction(MethodInfo targetMethod, object[] args)
         {
-            return _memoryCache.Get(args[0]);
+            var reference = args[0] as IReference;
+            return _memoryCache.Get(reference.CacheCode);
         }
 
         public object AfterAction(MethodInfo targetMethod, object[] args)
         {
+            var reference = args[0] as IReference;
             var obj = args.Last();
 
-            if(obj is List<T>)
+            if (obj is TAspect)
             {
-                ((List<T>)obj).Select(o => _memoryCache.Set(o.Code, o));                
-            }
-
-            if (obj is T)
-            {
-                _memoryCache.Set(((T)obj).Code, obj);
+                _memoryCache.Set(reference.CacheCode, obj);
             }
 
             return obj;

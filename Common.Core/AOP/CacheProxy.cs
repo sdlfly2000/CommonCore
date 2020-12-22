@@ -5,7 +5,7 @@ namespace Common.Core.AOP
 {
     public class CacheProxy : CommonProxy
     {
-        public ICacheAction<ICacheAspect> CacheAction { get; set; }
+        public ICacheAction<ICacheAspect, IReference> CacheAction { get; set; }
         
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
