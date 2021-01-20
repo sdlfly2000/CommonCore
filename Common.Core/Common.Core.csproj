@@ -15,6 +15,7 @@
     <PackageProjectUrl>https://github.com/sdlfly2000/CommonCore</PackageProjectUrl>
   </PropertyGroup>
   <ItemGroup>
+	<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="3.1.9" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.9" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.9" />
