@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Common.Core.Data.Sql
+﻿namespace Common.Core.Data.Sql
 {
-    public interface IUnitOfWork<T> where T : class
+    public interface IUnitOfWork<in TEntity> where TEntity : class
     {
-        DbSet<T> LoadAll();
+        void Persist<TEntity>(TEntity entity) where TEntity : class;
+
+        void Add<TEntity>(TEntity entity) where TEntity : class;
     }
 }
