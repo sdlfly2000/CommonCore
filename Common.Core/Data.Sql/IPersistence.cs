@@ -1,7 +1,9 @@
-﻿namespace Common.Core.Data.Sql
+﻿using System.Threading.Tasks;
+
+namespace Common.Core.Data.Sql
 {
     public interface IPersistence
     {
-        void Complete();
+        Task<int> Complete();
     }
 }
