@@ -18,12 +18,12 @@ namespace Common.Core.Data.Sql
             _aspectLoader = aspectLoader;
         }
 
-        public void Add(TAspect aspect)
+        public virtual void Add(TAspect aspect)
         {
             _uow.Add(Map(aspect));
         }
 
-        public void Synchronize(TAspect aspect)
+        public virtual void Synchronize(TAspect aspect)
         {
             var aspectLoaded = _aspectLoader.Load(aspect.Reference);
 
@@ -37,7 +37,7 @@ namespace Common.Core.Data.Sql
             }
         }
 
-        public void Update(TAspect aspect)
+        public virtual void Update(TAspect aspect)
         {
             _uow.Persist(Map(aspect));
         }
