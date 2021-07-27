@@ -37,8 +37,6 @@ namespace Common.Core.TcpServer
 
         private bool disposed = false;
 
-        private IHandleReceivedData _handleReceivedData;
-
         #endregion
 
         #region Properties
@@ -153,11 +151,6 @@ namespace Common.Core.TcpServer
             }
         }
 
-        public void SetHandleReceivedData(IHandleReceivedData handleReceivedData)
-        {
-            _handleReceivedData = handleReceivedData;
-        }
-
         /// <summary>
         /// 处理客户端连接的函数
         /// </summary>
@@ -223,8 +216,6 @@ namespace Common.Core.TcpServer
                 // received byte and trigger event notification
                 byte[] buff = new byte[recv];
                 Buffer.BlockCopy(state.Buffer, 0, buff, 0, recv);
-
-                _handleReceivedData.Process(buff);
 
                 //触发数据收到事件
                 RaiseDataReceived(state);
