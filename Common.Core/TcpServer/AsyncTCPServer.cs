@@ -158,9 +158,9 @@ namespace Common.Core.TcpServer
         {
             if (IsRunning)
             {
-                //TcpListener tcpListener = (TcpListener)ar.AsyncState;
+                TcpListener tcpListener = (TcpListener)ar.AsyncState;
+                TcpClient client = tcpListener.EndAcceptTcpClient(ar);
 
-                TcpClient client = _listener.EndAcceptTcpClient(ar);
                 byte[] buffer = new byte[client.ReceiveBufferSize];
 
                 TCPClientState state
