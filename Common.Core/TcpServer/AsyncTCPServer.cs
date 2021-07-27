@@ -33,7 +33,7 @@ namespace Common.Core.TcpServer
         /// <summary>
         /// 客户端会话列表
         /// </summary>
-        private List<Object> _clients;
+        private List<TCPClientState> _clients;
 
         private bool disposed = false;
 
@@ -92,10 +92,9 @@ namespace Common.Core.TcpServer
             Port = listenPort;
             this.Encoding = Encoding.Default;
 
-            _clients = new List<Object>();
+            _clients = new List<TCPClientState>();
 
             _listener = new TcpListener(Address, Port);
-            //_listener.AllowNatTraversal(true);
         }
 
         #endregion
@@ -405,10 +404,7 @@ namespace Common.Core.TcpServer
         /// </summary>
         public void CloseAllClient()
         {
-            foreach (TCPClientState client in _clients)
-            {
-                Close(client);
-            }
+            _clients.ForEach(c => c.Close());
             _clientCount = 0;
             _clients.Clear();
         }
