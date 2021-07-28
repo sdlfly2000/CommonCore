@@ -11,6 +11,8 @@ namespace Common.Core.TcpServer.AsyncTCPServerContracts
         /// </summary>
         public string _msg;
 
+        public byte[] Data;
+
         /// <summary>
         /// 客户端状态封装类
         /// </summary>
@@ -34,6 +36,13 @@ namespace Common.Core.TcpServer.AsyncTCPServerContracts
         public AsyncEventArgs(string msg, TCPClientState state)
         {
             _msg = msg;
+            _state = state;
+            IsHandled = false;
+        }
+
+        public AsyncEventArgs(byte[] data, TCPClientState state)
+        {
+            Data = data;
             _state = state;
             IsHandled = false;
         }

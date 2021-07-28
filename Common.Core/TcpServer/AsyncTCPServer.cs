@@ -205,6 +205,7 @@ namespace Common.Core.TcpServer
                     // connection has been closed
                     lock (_clients)
                     {
+                        state.Close();
                         _clients.Remove(state);
                         //触发客户端连接断开事件
                         RaiseClientDisconnected(state);
@@ -212,12 +213,9 @@ namespace Common.Core.TcpServer
                     }
                 }
 
-                // received byte and trigger event notification
-                byte[] buff = new byte[recv];
-                Buffer.BlockCopy(state.Buffer, 0, buff, 0, recv);
-
                 //触发数据收到事件
-                RaiseDataReceived(state);
+                var message = state.Buffer[0..recv];
+                RaiseDataReceived(message, state);
 
                 // continue listening for tcp datagram packets
                 stream.BeginRead(state.Buffer, 0, state.Buffer.Length, HandleDataReceived, state);
@@ -304,11 +302,11 @@ namespace Common.Core.TcpServer
         /// </summary>
         public event EventHandler<AsyncEventArgs> DataReceived;
 
-        private void RaiseDataReceived(TCPClientState state)
+        private void RaiseDataReceived(byte[] message, TCPClientState state)
         {
             if (DataReceived != null)
             {
-                DataReceived(this, new AsyncEventArgs(state));
+                DataReceived(this, new AsyncEventArgs(message, state));
             }
         }
 

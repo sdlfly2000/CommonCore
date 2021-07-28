@@ -27,6 +27,9 @@ namespace Common.Core.DependencyInjection
                         case ServiceType.Scoped:
                             services.AddScoped(iFace, impl);
                             break;
+                        case ServiceType.Singleton:
+                            services.AddSingleton(iFace, impl);
+                            break;
                         default:
                             services.AddTransient(iFace, impl);
                             break;
