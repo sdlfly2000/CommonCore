@@ -5,19 +5,14 @@ namespace Common.Core.AOP
 {
     public class CacheProxy : CommonProxy
     {
-        private readonly ICacheAction _cacheAction;
-
-        public CacheProxy(ICacheAction cacheAction)
-        {
-            _cacheAction = cacheAction;
-        }
+        public ICacheAction<ICacheAspect, IReference> CacheAction { get; set; }
         
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
             object obj;
             if (args.Length > 0)
             {
-                obj = _cacheAction.BeforeAction(targetMethod, args);
+                obj = CacheAction.BeforeAction(targetMethod, args);
 
                 if (obj != null)
                 {
@@ -29,7 +24,7 @@ namespace Common.Core.AOP
 
             var parameters = args.Append(obj).ToArray();
 
-            return _cacheAction.AfterAction(targetMethod, parameters);
+            return CacheAction.AfterAction(targetMethod, parameters);
         }
     }
 }
