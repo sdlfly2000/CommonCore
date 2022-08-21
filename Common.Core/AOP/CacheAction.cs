@@ -1,11 +1,12 @@
 ﻿using System.Reflection;
 using System.Linq;
-using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
+using Common.Core.DependencyInjection;
 
 namespace Common.Core.AOP
 {
-    public class CacheAction<TAspect, TReference>: ICacheAction<TAspect, TReference> where TReference : IReference
+    [ServiceLocate(typeof(ICacheAction))]
+    public class CacheAction: ICacheAction
     {
         private readonly IMemoryCache _memoryCache;
 
@@ -23,13 +24,9 @@ namespace Common.Core.AOP
         public object AfterAction(MethodInfo targetMethod, object[] args)
         {
             var reference = args[0] as IReference;
-            var obj = args.Last();
-
-            if (obj is TAspect)
-            {
-                _memoryCache.Set(reference.CacheCode, obj);
-            }
-
+            var obj = args.Last(); 
+            _memoryCache.Set(reference.CacheCode, obj);
+            
             return obj;
         }
     }
