@@ -7,7 +7,7 @@ namespace Common.Core.DependencyInjection
 {
     public static class DIModule
     {
-        public static void RegisterDomain(IServiceCollection services, IList<string> domains)
+        public static void RegisterDomain(this IServiceCollection services, IList<string> domains)
         {
             domains.Add("Common.Core");
 
