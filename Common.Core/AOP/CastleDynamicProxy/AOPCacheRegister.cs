@@ -27,14 +27,15 @@ namespace Common.Core.AOP.CastleDynamicProxy
 
                 services.AddTransient(serviceInterface, (serviceProvider) =>
                 {
-                    //var logger = (ILogger)serviceProvider.GetRequiredService(typeof(ILogger<>));
+                    
+                    var logger = (ILogger<CacheInterceptor>)serviceProvider.GetRequiredService(typeof(ILogger<CacheInterceptor>));
                     var memoryCache = (IMemoryCache)serviceProvider.GetRequiredService(typeof(IMemoryCache));
                     var cacheInvocation = serviceProvider.GetRequiredService(serviceImplement);
 
                     var cacheProxy = proxyGenerator.CreateInterfaceProxyWithTarget(
                         serviceInterface, 
                         cacheInvocation, 
-                        new CacheInterceptor(memoryCache));
+                        new CacheInterceptor(logger, memoryCache));
 
                     return cacheProxy;
                 });

@@ -7,37 +7,51 @@ namespace Common.Core.AOP.CastleDynamicProxy
 {
     public class CacheInterceptor : IInterceptor
     {
-        //private readonly ILogger _logger;
+        private readonly ILogger<CacheInterceptor> _logger;
         private readonly IMemoryCache _memoryCache;
 
         public CacheInterceptor(
-            //ILogger logger, 
+            ILogger<CacheInterceptor> logger, 
             IMemoryCache memoryCache)
         {
-            //_logger = logger;
+            _logger = logger;
             _memoryCache = memoryCache;
         }
 
         public void Intercept(IInvocation invocation)
         {
-            Console.WriteLine("In Intercept");
-            if(!invocation.MethodInvocationTarget.IsDefined(typeof(CacheMethodAttribute), false))
+            using (_logger.BeginScope($"In Cache"))
             {
-                return;
+                try
+                {
+                    if (!invocation.MethodInvocationTarget.IsDefined(typeof(CacheMethodAttribute), false))
+                    {
+                        return;
+                    }
+
+                    var aspectReference = invocation.Arguments[0] as IReference;
+                    var aspectInCache = TryGetObjectInCache(aspectReference);
+
+                    if (aspectInCache != null)
+                    { 
+                        invocation.ReturnValue = aspectInCache;
+
+                        _logger.LogInformation($"Loaded {aspectReference.CacheCode} in Cache");
+
+                        return;
+                    }
+
+                    _logger.LogInformation($"{aspectReference.CacheCode} dese not exist in Cache");
+
+                    invocation.Proceed();
+
+                    TrySetObjectInCache(aspectReference, invocation.ReturnValue);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(exception: e, message: e.Message);
+                }
             }
-
-            var aspectReference = invocation.Arguments[0] as IReference;
-            var aspectInCache = TryGetObjectInCache(aspectReference);
-
-            if (aspectInCache != null)
-            {
-                invocation.ReturnValue = aspectInCache;
-                return;
-            }
-
-            invocation.Proceed();
-
-            TrySetObjectInCache(aspectReference, invocation.ReturnValue);
         }
 
         #region Private Methods
