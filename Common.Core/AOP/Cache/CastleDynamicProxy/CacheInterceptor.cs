@@ -1,4 +1,5 @@
 ﻿using Castle.DynamicProxy;
+using Common.Core.AOP.Cache;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;

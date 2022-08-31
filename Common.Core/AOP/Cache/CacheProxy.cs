@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Linq;
+using Common.Core.AOP.Cache;
 
 namespace Common.Core.AOP
 {

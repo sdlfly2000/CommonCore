@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
+using Common.Core.AOP.Cache;
 
 namespace Common.Core.AOP
 {
