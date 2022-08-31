@@ -1,4 +1,4 @@
-﻿using Common.Core.AOP;
+﻿using Common.Core.AOP.Cache;
 using Common.Core.Domain;
 
 namespace Common.Core.Data.Sql

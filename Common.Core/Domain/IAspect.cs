@@ -1,4 +1,4 @@
-﻿using Common.Core.AOP;
+﻿using Common.Core.AOP.Cache;
 
 namespace Common.Core.Domain
 {
