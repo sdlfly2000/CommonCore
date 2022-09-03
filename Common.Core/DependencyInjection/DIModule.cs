@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -7,11 +6,11 @@ namespace Common.Core.DependencyInjection
 {
     public static class DIModule
     {
-        public static IServiceCollection RegisterDomain(this IServiceCollection services, IList<string> domains)
+        public static IServiceCollection RegisterDomain(this IServiceCollection services, params string[] domains)
         {
-            domains.Add("Common.Core");
+            var domainList = domains.Append("Common.Core").ToList();
 
-            var asms = domains.Select(domain => Assembly.Load(domain)).ToList();
+            var asms = domainList.Select(domain => Assembly.Load(domain)).ToList();
 
             var impls = asms.SelectMany(asm => asm.GetExportedTypes().Where(t => !t.IsInterface).ToList()).ToList();
 

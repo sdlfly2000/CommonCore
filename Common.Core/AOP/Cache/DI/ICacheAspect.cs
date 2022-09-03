@@ -1,4 +1,4 @@
-﻿namespace Common.Core.AOP.Cache
+﻿namespace Common.Core.AOP.Cache.DI
 {
     public interface ICacheAspect
     {

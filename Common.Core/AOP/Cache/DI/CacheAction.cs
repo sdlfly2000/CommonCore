@@ -1,12 +1,10 @@
 ﻿using System.Reflection;
 using System.Linq;
-using System.Collections.Generic;
 using Microsoft.Extensions.Caching.Memory;
-using Common.Core.AOP.Cache;
 
-namespace Common.Core.AOP
+namespace Common.Core.AOP.Cache.DI
 {
-    public class CacheAction<TAspect, TReference>: ICacheAction<TAspect, TReference> where TReference : IReference
+    public class CacheAction<TAspect, TReference> : ICacheAction<TAspect, TReference> where TReference : IReference
     {
         private readonly IMemoryCache _memoryCache;
 

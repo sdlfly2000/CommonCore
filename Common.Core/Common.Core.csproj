@@ -13,6 +13,7 @@
     <RepositoryUrl>https://github.com/sdlfly2000/CommonCore</RepositoryUrl>
     <RepositoryType>Dll</RepositoryType>
     <PackageProjectUrl>https://github.com/sdlfly2000/CommonCore</PackageProjectUrl>
+	<Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Castle.Core" Version="5.1.0" />

@@ -1,10 +1,10 @@
 ﻿using System;
 
-namespace Common.Core.AOP.CastleDynamicProxy
+namespace Common.Core.AOP
 {
-    public class CacheAttribute : Attribute
+    public class AOPInterceptionAttribute : Attribute
     {
-        public CacheAttribute(Type serviceType, Type serviceImplement)
+        public AOPInterceptionAttribute(Type serviceType, Type serviceImplement)
         {
             Implement = serviceImplement;
             InterFace = serviceType;

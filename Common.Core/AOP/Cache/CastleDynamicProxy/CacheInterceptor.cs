@@ -1,12 +1,15 @@
 ﻿using Castle.DynamicProxy;
 using Common.Core.AOP.Cache;
+using Common.Core.AOP.Cache.CastleDynamicProxy;
+using Common.Core.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;
 
 namespace Common.Core.AOP.CastleDynamicProxy
 {
-    public class CacheInterceptor : IInterceptor
+    [ServiceLocate(typeof(ICacheIntercptor))]
+    public class CacheInterceptor : ICacheIntercptor
     {
         private readonly ILogger<CacheInterceptor> _logger;
         private readonly IMemoryCache _memoryCache;

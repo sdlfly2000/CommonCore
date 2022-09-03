@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace Common.Core.AOP.Cache
+namespace Common.Core.AOP.Cache.DI
 {
     public class CommonProxy : DispatchProxy
     {
