@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Common.Core.LogService
 {
-    public class Log2File : ILogger, IDisposable
+    public class Log2File : ILog2File
     {
         private readonly StreamWriter _logFileStream;
 
@@ -40,7 +40,6 @@ namespace Common.Core.LogService
             entryBuilder.Append(formatter);
 
             _logFileStream.Write(entryBuilder.ToString());
-
         }
 
         public void Dispose()
