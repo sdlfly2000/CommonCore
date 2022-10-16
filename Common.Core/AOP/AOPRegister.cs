@@ -19,7 +19,7 @@ namespace Common.Core.AOP
 
             if (enableCache)
             {
-                interceptorList.Add(typeof(ICacheIntercptor));
+                interceptorList.Add(typeof(ICacheInterceptor));
             }
 
             if (enableLog)

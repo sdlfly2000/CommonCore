@@ -30,17 +30,31 @@ namespace Common.Core.Test.LogService
             _log2File = new Log2File(_configurationMock.Object);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Integration")]
         public void Given_LogContent_When_Log_Then_contentInFile()
         {
             // Arrange
             var logContent = "Test is a test";
 
             // Action
-            _log2File.Log<string>(LogLevel.Information, (EventId)101, logContent, null, _formatter);
+            _log2File.Log(LogLevel.Information, (EventId)101, logContent, null, _formatter);
 
+            _log2File.Dispose();
             // Assert
 
+        }
+
+        [TestMethod, TestCategory("Integration")]
+        public void Given_LogContent_When_LogInformation_Then_contentInFile()
+        {
+            // Arrange
+            var logContent = "LogInformation Test";
+
+            // Action
+            _log2File.LogInformation(logContent);
+
+            _log2File.Dispose();
+            // Assert
         }
     }
 }

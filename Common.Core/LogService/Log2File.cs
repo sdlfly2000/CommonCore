@@ -25,21 +25,31 @@ namespace Common.Core.LogService
             throw new NotImplementedException();
         }
 
+        public void LogInformation(string information)
+        {
+            Log(LogLevel.Information, default(EventId), information, null, (context, ex) => 
+            {
+                return context; 
+            });
+        }
+
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
-            if(_logFileStream == null)
+            if (_logFileStream == null)
             {
                 return;
             }
 
-            var entryBuilder = new StringBuilder(DateTime.UtcNow.ToString());
-            entryBuilder.Append(logLevel.ToString());
-            entryBuilder.Append(eventId.ToString());
-            entryBuilder.Append(nameof(state));
-            entryBuilder.Append(exception);
-            entryBuilder.Append(formatter);
+            var entryBuilder = new StringBuilder();
 
-            _logFileStream.Write(entryBuilder.ToString());
+            AppendWithSplit(entryBuilder, DateTime.UtcNow.ToString());
+            AppendWithSplit(entryBuilder, logLevel.ToString());
+            if(eventId != default(EventId)) AppendWithSplit(entryBuilder, eventId.ToString());
+            AppendWithSplit(entryBuilder, typeof(TState).Name);            
+            if(exception != null) AppendWithSplit(entryBuilder, exception.Message);            
+            entryBuilder.Append(formatter(state, exception));
+
+            _logFileStream.WriteLine(entryBuilder.ToString());
         }
 
         public void Dispose()
@@ -49,5 +59,16 @@ namespace Common.Core.LogService
                 _logFileStream.Dispose();
             }
         }
+
+        #region Private Methods
+
+        private string AddSplit() => " | ";
+
+        private void AppendWithSplit(StringBuilder builder ,string content)
+        {
+            builder.Append(content).Append(AddSplit());
+        }
+
+        #endregion
     }
 }

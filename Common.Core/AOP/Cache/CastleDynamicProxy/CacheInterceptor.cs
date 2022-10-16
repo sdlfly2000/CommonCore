@@ -8,8 +8,8 @@ using System;
 
 namespace Common.Core.AOP.CastleDynamicProxy
 {
-    [ServiceLocate(typeof(ICacheIntercptor))]
-    public class CacheInterceptor : ICacheIntercptor
+    [ServiceLocate(typeof(ICacheInterceptor))]
+    public class CacheInterceptor : ICacheInterceptor
     {
         private readonly ILogger<CacheInterceptor> _logger;
         private readonly IMemoryCache _memoryCache;
