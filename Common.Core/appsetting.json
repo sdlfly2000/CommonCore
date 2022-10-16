@@ -1,3 +1,4 @@
 ﻿{
-  "UploadToNuget": false
+  "UploadToNuget": false,
+  "LogFilePath": "logFile.log"
 }
