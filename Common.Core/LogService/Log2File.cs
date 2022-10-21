@@ -9,10 +9,12 @@ namespace Common.Core.LogService
     public class Log2File : ILog2File
     {
         private readonly StreamWriter _logFileStream;
+        private readonly LogLevel _logLevel;
 
         public Log2File(IConfiguration configuration)
         {
-            _logFileStream = File.AppendText(configuration["LogFilePath"]);
+            _logFileStream = File.AppendText(configuration["LogFileSettings:Path"]);
+            _logLevel = Enum.Parse<LogLevel>(configuration["LogFileSettings:Level"]);
         }
 
         public IDisposable BeginScope<TState>(TState state)
@@ -22,7 +24,7 @@ namespace Common.Core.LogService
 
         public bool IsEnabled(LogLevel logLevel)
         {
-            throw new NotImplementedException();
+            return _logLevel <= logLevel;
         }
 
         public void LogInformation(string information)

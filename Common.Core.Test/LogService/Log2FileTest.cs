@@ -19,8 +19,12 @@ namespace Common.Core.Test.LogService
             _configurationMock = new Mock<IConfiguration>();
 
             _configurationMock
-                .Setup(configuration => configuration["LogFilePath"])
+                .Setup(configuration => configuration["LogFileSettings:Path"])
                 .Returns("test.log");
+
+            _configurationMock
+                .Setup(configuration => configuration["LogFileSettings:Level"])
+                .Returns("Information");
 
             _formatter = (content, ex) =>
             {
@@ -29,6 +33,8 @@ namespace Common.Core.Test.LogService
 
             _log2File = new Log2File(_configurationMock.Object);
         }
+
+        #region Integration Test
 
         [TestMethod, TestCategory("Integration")]
         public void Given_LogContent_When_Log_Then_contentInFile()
@@ -56,5 +62,41 @@ namespace Common.Core.Test.LogService
             _log2File.Dispose();
             // Assert
         }
+
+        #endregion
+
+        #region UnitTest
+
+        [TestMethod, TestCategory("UnitTest")]
+        public void Given_LogLevel_When_IsEnable_Then_return_false()
+        {
+            // Arrange
+            var level = LogLevel.Debug;
+
+            // Action
+            var result = _log2File.IsEnabled(level);
+
+            _log2File.Dispose();
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsFalse(result);
+        }
+
+        [TestMethod, TestCategory("UnitTest")]
+        public void Given_LogLevel_When_IsEnable_Then_return_true()
+        {
+            // Arrange
+            var level = LogLevel.Information;
+
+            // Action
+            var result = _log2File.IsEnabled(level);
+
+            _log2File.Dispose();
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result);
+        }
+
+        #endregion
     }
 }

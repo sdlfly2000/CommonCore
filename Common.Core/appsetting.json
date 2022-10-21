@@ -1,4 +1,7 @@
 ﻿{
   "UploadToNuget": false,
-  "LogFilePath": "logFile.log"
+  "LogFileSettings": {
+    "Level": "Information",
+    "Path": "logFile.log"
+  }
 }
