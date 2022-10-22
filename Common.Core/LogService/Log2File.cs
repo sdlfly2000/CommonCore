@@ -19,7 +19,7 @@ namespace Common.Core.LogService
 
         public IDisposable BeginScope<TState>(TState state)
         {
-            throw new NotImplementedException();
+            return this;
         }
 
         public bool IsEnabled(LogLevel logLevel)
