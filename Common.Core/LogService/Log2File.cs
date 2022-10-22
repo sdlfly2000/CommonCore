@@ -1,20 +1,27 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Common.Core.LogService
 {
     public class Log2File : ILog2File
     {
-        private readonly StreamWriter _logFileStream;
+        private const int Entries_Per_Write = 10;
+
+        private readonly string _logFilePath;
         private readonly LogLevel _logLevel;
+
+        private IList<string> _logEntiries;
 
         public Log2File(IConfiguration configuration)
         {
-            _logFileStream = File.AppendText(configuration["LogFileSettings:Path"]);
+            _logFilePath = configuration["LogFileSettings:Path"];
             _logLevel = Enum.Parse<LogLevel>(configuration["LogFileSettings:Level"]);
+            _logEntiries = new List<string>();
         }
 
         public IDisposable BeginScope<TState>(TState state)
@@ -37,29 +44,23 @@ namespace Common.Core.LogService
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
-            if (_logFileStream == null)
-            {
-                return;
-            }
-
             var entryBuilder = new StringBuilder();
 
             AppendWithSplit(entryBuilder, DateTime.UtcNow.ToString());
             AppendWithSplit(entryBuilder, logLevel.ToString());
-            if(eventId != default(EventId)) AppendWithSplit(entryBuilder, eventId.ToString());
-            AppendWithSplit(entryBuilder, typeof(TState).Name);            
-            if(exception != null) AppendWithSplit(entryBuilder, exception.Message);            
+            if (eventId != default(EventId)) AppendWithSplit(entryBuilder, eventId.ToString());
+            AppendWithSplit(entryBuilder, typeof(TState).Name);
+            if (exception != null) AppendWithSplit(entryBuilder, exception.Message);
             entryBuilder.Append(formatter(state, exception));
+        
+            _logEntiries.Add(entryBuilder.ToString());
 
-            _logFileStream.WriteLine(entryBuilder.ToString());
+            if (_logEntiries.Count > Entries_Per_Write) AppendLogEntriesToLogFile(_logEntiries);
         }
 
         public void Dispose()
         {
-            if (_logFileStream != null)
-            {
-                _logFileStream.Dispose();
-            }
+            if (_logEntiries.Any()) AppendLogEntriesToLogFile(_logEntiries);
         }
 
         #region Private Methods
@@ -69,6 +70,12 @@ namespace Common.Core.LogService
         private void AppendWithSplit(StringBuilder builder ,string content)
         {
             builder.Append(content).Append(AddSplit());
+        }
+
+        private void AppendLogEntriesToLogFile(IList<string> logEntries)
+        {
+            File.AppendAllLines(_logFilePath,logEntries);
+            _logEntiries.Clear();
         }
 
         #endregion

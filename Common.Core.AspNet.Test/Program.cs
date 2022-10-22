@@ -3,10 +3,8 @@ using Common.Core.LogService;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging.AddProvider(new Log2FileProvider(builder.Configuration));
-
 builder.Services
-    .AddLogging()
+    .AddLogging((configure) => configure.AddProvider(new Log2FileProvider(builder.Configuration)))
     .AddMemoryCache()
     .RegisterDomain("Common.Core.AspNet.Test");
 
@@ -17,5 +15,3 @@ var app = builder.Build();
 app.MapControllers();
 
 app.Run();
-
-
