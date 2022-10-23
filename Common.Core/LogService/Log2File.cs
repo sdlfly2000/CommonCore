@@ -14,6 +14,7 @@ namespace Common.Core.LogService
 
         private readonly string _logFilePath;
         private readonly LogLevel _logLevel;
+        private readonly int _entriesPerWrite;
 
         private IList<string> _logEntiries;
 
@@ -21,6 +22,10 @@ namespace Common.Core.LogService
         {
             _logFilePath = configuration["LogFileSettings:Path"];
             _logLevel = Enum.Parse<LogLevel>(configuration["LogFileSettings:Level"]);
+
+            _entriesPerWrite = configuration["LogFileSettings:EntryPerWrite"] != null 
+                ? int.Parse(configuration["LogFileSettings:EntryPerWrite"])
+                : Entries_Per_Write;
             _logEntiries = new List<string>();
         }
 
@@ -55,7 +60,7 @@ namespace Common.Core.LogService
         
             _logEntiries.Add(entryBuilder.ToString());
 
-            if (_logEntiries.Count > Entries_Per_Write) AppendLogEntriesToLogFile(_logEntiries);
+            if (_logEntiries.Count >= _entriesPerWrite) AppendLogEntriesToLogFile(_logEntiries);
         }
 
         public void Dispose()
