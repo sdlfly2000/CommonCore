@@ -30,6 +30,7 @@ namespace Common.Core.AOP.CastleDynamicProxy
                 {
                     if (!invocation.MethodInvocationTarget.IsDefined(typeof(CacheMethodAttribute), false))
                     {
+                        invocation.Proceed();
                         return;
                     }
 
@@ -37,7 +38,7 @@ namespace Common.Core.AOP.CastleDynamicProxy
                     var aspectInCache = TryGetObjectInCache(aspectReference);
 
                     if (aspectInCache != null)
-                    { 
+                    {
                         invocation.ReturnValue = aspectInCache;
 
                         _logger.LogInformation($"Loaded {aspectReference.CacheCode} in Cache");
@@ -47,9 +48,8 @@ namespace Common.Core.AOP.CastleDynamicProxy
 
                     _logger.LogInformation($"{aspectReference.CacheCode} dese not exist in Cache");
 
-                    invocation.Proceed();
-
                     TrySetObjectInCache(aspectReference, invocation.ReturnValue);
+                    
                 }
                 catch (Exception e)
                 {
