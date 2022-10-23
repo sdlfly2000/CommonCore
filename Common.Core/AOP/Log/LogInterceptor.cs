@@ -19,8 +19,8 @@ namespace Common.Core.AOP.Log
         {
             _logger.LogInformation("Executing: {0}", invocation.MethodInvocationTarget.Name);
             invocation.Proceed();
-            _logger.LogInformation("Exiting: {0}", invocation.MethodInvocationTarget.Name);
             _logger.LogInformation("With Result: {0}", JsonConvert.ToString(invocation.ReturnValue));
+            _logger.LogInformation("Exiting: {0}", invocation.MethodInvocationTarget.Name);
         }
     }
 }
