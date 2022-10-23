@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Common.Core.AOP;
+using Common.Core.AOP.Log;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Common.Core.AspNet.Test.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HomeController : ControllerBase
+    [AOPInterception(typeof(IHomeController), typeof(HomeController))]
+    public class HomeController : ControllerBase, IHomeController
     {
         private readonly ILogger<HomeController> _logger;
 
@@ -14,6 +17,7 @@ namespace Common.Core.AspNet.Test.Controllers
         }
 
         [HttpGet("index")]
+        [LogTrace]
         public IActionResult Index()
         {
             _logger.LogInformation("Testing");

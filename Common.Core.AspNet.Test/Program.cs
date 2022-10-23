@@ -1,4 +1,5 @@
-﻿using Common.Core.DependencyInjection;
+﻿using Common.Core.AOP;
+using Common.Core.DependencyInjection;
 using Common.Core.LogService;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,7 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services
     .AddLogging((configure) => configure.AddProvider(new Log2FileProvider(builder.Configuration)))
     .AddMemoryCache()
-    .RegisterDomain("Common.Core.AspNet.Test");
+    .RegisterDomain("Common.Core.AspNet.Test")
+    .RegisterInterceptor(true, false, null, "Common.Core.AspNet.Test");
 
 builder.Services.AddControllers();
 

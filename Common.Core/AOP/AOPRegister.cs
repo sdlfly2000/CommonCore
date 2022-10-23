@@ -32,10 +32,10 @@ namespace Common.Core.AOP
 
             var interceptions = exportedTypes.SelectMany(exportedType => exportedType.GetCustomAttributes(typeof(AOPInterceptionAttribute))).ToList();
 
-            interceptions.ForEach(cache =>
+            interceptions.ForEach(interception =>
             {
-                var serviceInterface = (cache as AOPInterceptionAttribute).InterFace;
-                var serviceImplement = (cache as AOPInterceptionAttribute).Implement;
+                var serviceInterface = (interception as AOPInterceptionAttribute).InterFace;
+                var serviceImplement = (interception as AOPInterceptionAttribute).Implement;
 
                 var IsExistImplementInstance = services.IsExistService(serviceInterface, out var serviceDescriptor);
 

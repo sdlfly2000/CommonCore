@@ -2,6 +2,7 @@
 
 namespace Common.Core.AOP
 {
+    // If AOPInterception used, no need ServiceLocate for DI
     public class AOPInterceptionAttribute : Attribute
     {
         public AOPInterceptionAttribute(Type serviceType, Type serviceImplement)
