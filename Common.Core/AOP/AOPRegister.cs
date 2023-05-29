@@ -34,7 +34,7 @@ namespace Common.Core.AOP
 
             interceptions.ForEach(interception =>
             {
-                var serviceInterface = (interception as AOPInterceptionAttribute)!.InterFace;
+                var serviceInterface = (interception as AOPInterceptionAttribute)!.Interface;
                 var serviceImplement = (interception as AOPInterceptionAttribute)!.Implement;
 
                 var IsExistImplementInstance = services.IsExistService(serviceInterface, out var serviceDescriptor);
