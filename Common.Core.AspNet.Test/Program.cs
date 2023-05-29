@@ -5,10 +5,10 @@ using Common.Core.LogService;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
-    .AddLogging((configure) => configure.AddProvider(new Log2FileProvider(builder.Configuration)))
     .AddMemoryCache()
+    .AddLogging((configure) => configure.AddProvider(new Log2FileProvider(builder.Configuration)))
     .RegisterDomain("Common.Core.AspNet.Test")
-    .RegisterInterceptor(true, true, null, "Common.Core.AspNet.Test");
+    .RegisterInterceptor(enableLog: false, enableCache: true, null, "Common.Core.AspNet.Test");
 
 builder.Services.AddControllers();
 

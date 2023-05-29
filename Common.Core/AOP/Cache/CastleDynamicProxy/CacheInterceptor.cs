@@ -24,49 +24,50 @@ namespace Common.Core.AOP.CastleDynamicProxy
 
         public void Intercept(IInvocation invocation)
         {
-            using (_logger.BeginScope($"In Cache"))
+            try
             {
-                try
+                if (!invocation.MethodInvocationTarget.IsDefined(typeof(CacheMethodAttribute), false))
                 {
-                    if (!invocation.MethodInvocationTarget.IsDefined(typeof(CacheMethodAttribute), false))
-                    {
-                        invocation.Proceed();
-                        return;
-                    }
-
-                    var aspectReference = invocation.Arguments[0] as IReference;
-                    var aspectInCache = TryGetObjectInCache(aspectReference);
-
-                    if (aspectInCache != null)
-                    {
-                        invocation.ReturnValue = aspectInCache;
-
-                        _logger.LogInformation($"Loaded {aspectReference.CacheCode} in Cache");
-
-                        return;
-                    }
-
-                    _logger.LogInformation($"{aspectReference.CacheCode} dese not exist in Cache");
-
-                    TrySetObjectInCache(aspectReference, invocation.ReturnValue);
-                    
+                    invocation.Proceed();
+                    return;
                 }
-                catch (Exception e)
+
+                var aspectReference = invocation.Arguments[0] as IReference;
+                var aspectInCache = TryGetObjectInCache(aspectReference);
+
+                if (aspectInCache != null)
                 {
-                    _logger.LogError(exception: e, message: e.Message);
+                    invocation.ReturnValue = aspectInCache;
+
+                    _logger.LogInformation($"Loaded {aspectReference.CacheCode} in Cache");
+
+                    return;
                 }
+
+                _logger.LogInformation($"{aspectReference.CacheCode} dese not exist in Cache");
+
+                invocation.Proceed();
+
+                TrySetObjectInCache(aspectReference, invocation.ReturnValue);
             }
+            catch (Exception e)
+            {
+                _logger.LogError(exception: e, message: e.Message);
+            }
+            
         }
 
         #region Private Methods
 
-        private object TryGetObjectInCache(IReference reference)
+        private object? TryGetObjectInCache(IReference reference)
         {
+            _logger.LogInformation($"MemoryCache: {_memoryCache.GetHashCode()}");
             return _memoryCache.Get(reference.CacheCode);
         }
 
         private void TrySetObjectInCache(IReference reference, object aspectToCache)
         {
+            _logger.LogInformation($"MemoryCache: {_memoryCache.GetHashCode()}");
             if (aspectToCache != null) _memoryCache.Set(reference.CacheCode, aspectToCache);
         }
 

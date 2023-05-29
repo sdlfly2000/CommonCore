@@ -8,10 +8,10 @@ namespace Common.Core.AOP
         public AOPInterceptionAttribute(Type serviceType, Type serviceImplement)
         {
             Implement = serviceImplement;
-            InterFace = serviceType;
+            Interface = serviceType;
         }
 
         public Type Implement { get; set; }
-        public Type InterFace { get; set; }
+        public Type Interface { get; set; }
     }
 }
