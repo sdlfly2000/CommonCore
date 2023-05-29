@@ -17,14 +17,14 @@ namespace Common.Core.AOP
         {
             var interceptorList = interceptors == null ? new List<Type>(): interceptors.ToList();
 
-            if (enableCache)
-            {
-                interceptorList.Add(typeof(ICacheInterceptor));
-            }
-
             if (enableLog)
             {
                 interceptorList.Add(typeof(ILogInterceptor));
+            }
+
+            if (enableCache)
+            {
+                interceptorList.Add(typeof(ICacheInterceptor));
             }
 
             var asms = domains.Select(domain => Assembly.Load(domain)).ToList();
@@ -34,24 +34,24 @@ namespace Common.Core.AOP
 
             interceptions.ForEach(interception =>
             {
-                var serviceInterface = (interception as AOPInterceptionAttribute).InterFace;
-                var serviceImplement = (interception as AOPInterceptionAttribute).Implement;
+                var serviceInterface = (interception as AOPInterceptionAttribute)!.InterFace;
+                var serviceImplement = (interception as AOPInterceptionAttribute)!.Implement;
 
                 var IsExistImplementInstance = services.IsExistService(serviceInterface, out var serviceDescriptor);
 
                 if (!IsExistImplementInstance) services.AddTransient(serviceImplement);
 
-                var serviceProvider = services.BuildServiceProvider();
+                using var serviceProvider = services.BuildServiceProvider();
 
                 var serviceImplementInstance = IsExistImplementInstance
                 ? serviceProvider.GetRequiredService(serviceInterface)
                 : serviceProvider.GetRequiredService(serviceImplement);
 
-                if (IsExistImplementInstance) services.Remove(serviceDescriptor);
+                if (IsExistImplementInstance) services.Remove(serviceDescriptor!);
 
                 var interceptorInstances = interceptorList.Select(interceptor => serviceProvider.GetRequiredService(interceptor) as IInterceptor).ToArray();
 
-                AddProxyTransient(services, serviceInterface, serviceImplementInstance, interceptorInstances);
+                AddProxyTransient(services, serviceInterface, serviceImplementInstance, interceptorInstances!);
             });
 
             return services;
@@ -59,7 +59,7 @@ namespace Common.Core.AOP
 
         #region Private Methods
 
-        private static bool IsExistService(this IServiceCollection services, Type serviceType, out ServiceDescriptor serviceDescriptor)
+        private static bool IsExistService(this IServiceCollection services, Type serviceType, out ServiceDescriptor? serviceDescriptor)
         {
             serviceDescriptor = services.FirstOrDefault(service => service.ServiceType.Equals(serviceType));
             return serviceDescriptor != null;
