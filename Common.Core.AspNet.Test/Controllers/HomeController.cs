@@ -13,17 +13,20 @@ namespace Common.Core.AspNet.Test.Controllers
         private readonly ILogTestAction _logTestAction;
         private readonly ICacheTestAction _cacheTestAction;
         private readonly IMemoryCache _memoryCache;
+        private readonly IPocAction _pocAction;
 
         public HomeController(
             ILogger<HomeController> logger, 
             ILogTestAction logTestAction, 
             ICacheTestAction cacheTestAction,
-            IMemoryCache memoryCache)
+            IMemoryCache memoryCache,
+            IPocAction pocAction)
         {
             _logger = logger;
             _logTestAction = logTestAction;
             _cacheTestAction = cacheTestAction;
             _memoryCache = memoryCache;
+            _pocAction = pocAction;
         }
 
         [HttpGet("index")]
@@ -56,5 +59,16 @@ namespace Common.Core.AspNet.Test.Controllers
             
             return Ok();
         }
+
+
+        [HttpGet("pocAction")]
+        public IActionResult PocAction()
+        {
+            _logger.LogInformation("Testing PocAction");
+            _ = _pocAction.GetKey1();
+            _ = _pocAction.GetKey2();
+            return Ok();
+        }
+
     }
 }

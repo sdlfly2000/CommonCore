@@ -19,7 +19,6 @@ namespace Common.Core.AspNet.Test.Actions
             _logger = logger;
         }
 
-        [CacheMethod]
         public CachedObject CreateObject(CachedObject cachedObject)
         {
             _logger.LogInformation($"MemoryCache: {_memoryCache.GetHashCode()}");
