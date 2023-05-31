@@ -7,7 +7,7 @@ namespace Common.Core.LogService
     {
         private readonly IConfiguration _configuration;
 
-        private ILog2File? _logger;
+        private static ILog2File? _logger;
 
         public Log2FileProvider(IConfiguration configuration)
         {
