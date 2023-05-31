@@ -1,9 +1,8 @@
 ﻿using Castle.DynamicProxy;
 using Common.Core.AOP.Cache;
 using Common.Core.AOP.Cache.CastleDynamicProxy;
+using Common.Core.Cache;
 using Common.Core.DependencyInjection;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using System;
 
 namespace Common.Core.AOP.CastleDynamicProxy
@@ -11,15 +10,12 @@ namespace Common.Core.AOP.CastleDynamicProxy
     [ServiceLocate(typeof(ICacheInterceptor))]
     public class CacheInterceptor : ICacheInterceptor
     {
-        private readonly ILogger<CacheInterceptor> _logger;
-        private readonly IMemoryCache _memoryCache;
 
-        public CacheInterceptor(
-            ILogger<CacheInterceptor> logger, 
-            IMemoryCache memoryCache)
+        private readonly ICacheService _cacheService;
+
+        public CacheInterceptor(ICacheService cacheService)
         {
-            _logger = logger;
-            _memoryCache = memoryCache;
+            _cacheService = cacheService;
         }
 
         public void Intercept(IInvocation invocation)
@@ -39,12 +35,12 @@ namespace Common.Core.AOP.CastleDynamicProxy
                 {
                     invocation.ReturnValue = aspectInCache;
 
-                    _logger.LogInformation($"Loaded {aspectReference.CacheCode} in Cache");
+                    //_logger.LogInformation($"Loaded {aspectReference.CacheCode} in Cache");
 
                     return;
                 }
 
-                _logger.LogInformation($"{aspectReference.CacheCode} dese not exist in Cache");
+                //_logger.LogInformation($"{aspectReference.CacheCode} dese not exist in Cache");
 
                 invocation.Proceed();
 
@@ -52,7 +48,7 @@ namespace Common.Core.AOP.CastleDynamicProxy
             }
             catch (Exception e)
             {
-                _logger.LogError(exception: e, message: e.Message);
+                //_logger.LogError(exception: e, message: e.Message);
             }
             
         }
@@ -61,14 +57,14 @@ namespace Common.Core.AOP.CastleDynamicProxy
 
         private object? TryGetObjectInCache(IReference reference)
         {
-            _logger.LogInformation($"MemoryCache: {_memoryCache.GetHashCode()}");
-            return _memoryCache.Get(reference.CacheCode);
+            //_logger.LogInformation($"MemoryCache: {_memoryCache.GetHashCode()}");
+            return _cacheService.Get(reference.CacheCode);
         }
 
         private void TrySetObjectInCache(IReference reference, object aspectToCache)
         {
-            _logger.LogInformation($"MemoryCache: {_memoryCache.GetHashCode()}");
-            if (aspectToCache != null) _memoryCache.Set(reference.CacheCode, aspectToCache);
+            //_logger.LogInformation($"MemoryCache: {_memoryCache.GetHashCode()}");
+            if (aspectToCache != null) _cacheService.Set(reference.CacheCode, aspectToCache);
         }
 
         #endregion

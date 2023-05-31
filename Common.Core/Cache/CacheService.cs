@@ -1,4 +1,4 @@
-﻿using Common.Core.Cache.MemoryCache;
+﻿using Common.Core.Cache.LocalMemoryCache;
 using Common.Core.DependencyInjection;
 using Microsoft.Extensions.Caching.Memory;
 using System.Collections.Generic;
