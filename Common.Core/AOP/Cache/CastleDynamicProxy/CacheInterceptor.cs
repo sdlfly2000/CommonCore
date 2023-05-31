@@ -59,13 +59,11 @@ namespace Common.Core.AOP.CastleDynamicProxy
 
         private object? TryGetObjectInCache(IReference reference)
         {
-            _logger.LogInformation($"MemoryCache: {_cacheService.GetHashCode()}");
             return _cacheService.Get(reference.CacheCode);
         }
 
         private void TrySetObjectInCache(IReference reference, object aspectToCache)
         {
-            _logger.LogInformation($"MemoryCache: {_cacheService.GetHashCode()}");
             if (aspectToCache != null) _cacheService.Set(reference.CacheCode, aspectToCache);
         }
 

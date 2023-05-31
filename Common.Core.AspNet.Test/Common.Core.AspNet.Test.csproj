@@ -14,4 +14,10 @@
     <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Attributes\" />
+    <Folder Include="Common\" />
+    <Folder Include="Interceptors\" />
+  </ItemGroup>
+
 </Project>
