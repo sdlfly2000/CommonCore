@@ -6,5 +6,8 @@ namespace Common.Core.LogService
     public interface ILog2File : ILogger, IDisposable
     {
         void LogInformation(string information);
+        void LogTrace(string information);
+        void LogDebug(string information);
+        void LogError(string information);
     }
 }

@@ -18,6 +18,8 @@ namespace Common.Core.LogService
 
         private IList<string> _logEntiries;
 
+        private static object _writeLock = new object();
+
         public Log2File(IConfiguration configuration)
         {
             _logFilePath = configuration["LogFileSettings:Path"];
@@ -41,14 +43,31 @@ namespace Common.Core.LogService
 
         public void LogInformation(string information)
         {
-            Log(LogLevel.Information, default(EventId), information, null, (context, ex) => 
-            {
-                return context; 
-            });
+            DoLog(LogLevel.Information, information);
+        }
+
+        public void LogTrace(string information)
+        {
+            DoLog(LogLevel.Trace, information);
+        }
+
+        public void LogDebug(string information)
+        {
+            DoLog(LogLevel.Debug, information);
+        }
+
+        public void LogError(string information)
+        {
+            DoLog(LogLevel.Error, information);
         }
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
+            if (!IsEnabled(logLevel))
+            {
+                return;
+            }
+
             var entryBuilder = new StringBuilder();
 
             AppendWithSplit(entryBuilder, DateTime.UtcNow.ToString());
@@ -79,8 +98,19 @@ namespace Common.Core.LogService
 
         private void AppendLogEntriesToLogFile(IList<string> logEntries)
         {
-            File.AppendAllLines(_logFilePath,logEntries);
-            _logEntiries.Clear();
+            lock (_writeLock)
+            {
+                File.AppendAllLines(_logFilePath, logEntries);
+                _logEntiries.Clear();
+            }
+        }
+
+        private void DoLog(LogLevel logLevel, string message)
+        {
+            Log(logLevel, default(EventId), message, null, (context, ex) =>
+            {
+                return context;
+            });
         }
 
         #endregion

@@ -1,8 +1,9 @@
 ﻿using Common.Core.AspNet.Test.Actions;
 using Common.Core.AspNet.Test.Models;
 using Common.Core.Cache;
+using Common.Core.LogService;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 
 namespace Common.Core.AspNet.Test.Controllers
 {
@@ -37,14 +38,14 @@ namespace Common.Core.AspNet.Test.Controllers
         [HttpGet("cached")]
         public IActionResult Cached()
         {
-            _logger.LogInformation("Testing Cached");
+            _logger.Log(LogLevel.Trace,"Testing Cached");
             var cacheObject = new CachedObject("1234", "CachedObject");
 
-            _logger.LogInformation($"After Create: {cacheObject.GetHashCode()}");
+            _logger.LogTrace($"After Create: {cacheObject.GetHashCode()}");
 
             var cachedObject = _cacheTestAction.CreateObject(cacheObject);
 
-            _logger.LogInformation($"After Create: {cachedObject.GetHashCode()}");
+            _logger.LogTrace($"After Create: {cachedObject.GetHashCode()}");
 
             return Ok();
         }
