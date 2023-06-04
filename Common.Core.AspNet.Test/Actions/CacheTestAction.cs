@@ -1,5 +1,6 @@
 ﻿using Common.Core.AOP;
 using Common.Core.AOP.CastleDynamicProxy;
+using Common.Core.AOP.Log;
 using Common.Core.AspNet.Test.Models;
 
 namespace Common.Core.AspNet.Test.Actions
@@ -16,6 +17,7 @@ namespace Common.Core.AspNet.Test.Actions
         }
 
         [CacheMethod]
+        [LogTrace]
         public CachedObject CreateObject(CachedObject cachedObject)
         {
             return cachedObject;

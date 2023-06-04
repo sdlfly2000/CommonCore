@@ -25,7 +25,7 @@ namespace Common.Core.AOP.Log
 
             _logger.LogTrace("Executing: {0}", invocation.MethodInvocationTarget.Name);
             invocation.Proceed();
-            _logger.LogTrace("With Result: {0}", JsonConvert.ToString(invocation.ReturnValue));
+            _logger.LogTrace("With Result: {0}", JsonConvert.SerializeObject(invocation.ReturnValue));
             _logger.LogTrace("Exiting: {0}", invocation.MethodInvocationTarget.Name);  
         }
     }
