@@ -98,10 +98,17 @@ namespace Common.Core.LogService
 
         private void AppendLogEntriesToLogFile(IList<string> logEntries)
         {
-            lock (_writeLock)
+            try
             {
-                File.AppendAllLines(_logFilePath, logEntries);
-                _logEntiries.Clear();
+                lock (_writeLock)
+                {
+                    File.AppendAllLines(_logFilePath, logEntries);
+                    _logEntiries.Clear();
+                }
+            }
+            catch(Exception ex)
+            {
+                LogError(ex.Message);
             }
         }
 
