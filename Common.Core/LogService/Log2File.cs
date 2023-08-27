@@ -1,5 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Common.Core.LogService.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -68,18 +70,29 @@ namespace Common.Core.LogService
                 return;
             }
 
+            _logEntiries.Add(formatter(state, exception));
+
+            if (_logEntiries.Count >= _entriesPerWrite) AppendLogEntriesToLogFile(_logEntiries);
+        }
+
+        public void LogActivity(IActivityLog log)
+        {
+            // Log Title: DateTimeStamp,LogLevel,TraceId,ActivityName,ActivityVector,Passed,Exception
+
             var entryBuilder = new StringBuilder();
 
             AppendWithSplit(entryBuilder, DateTime.UtcNow.ToString());
-            AppendWithSplit(entryBuilder, logLevel.ToString());
-            if (eventId != default(EventId)) AppendWithSplit(entryBuilder, eventId.ToString());
-            AppendWithSplit(entryBuilder, typeof(TState).Name);
-            if (exception != null) AppendWithSplit(entryBuilder, exception.Message);
-            entryBuilder.Append(formatter(state, exception));
-        
-            _logEntiries.Add(entryBuilder.ToString());
+            AppendWithSplit(entryBuilder, LogLevel.Information.ToString());
+            AppendWithSplit(entryBuilder, log.TraceId);
+            AppendWithSplit(entryBuilder, log.ActivityName);
+            AppendWithSplit(entryBuilder, log.ActivityVector);
+            AppendWithSplit(entryBuilder, log.Passed.ToString());
+            AppendWithSplit(entryBuilder, log.Exception);
 
-            if (_logEntiries.Count >= _entriesPerWrite) AppendLogEntriesToLogFile(_logEntiries);
+            Log(LogLevel.Information, default(EventId), entryBuilder.ToString(), null, (context, ex) =>
+            {
+                return context;
+            });
         }
 
         public void Dispose()
@@ -89,7 +102,7 @@ namespace Common.Core.LogService
 
         #region Private Methods
 
-        private string AddSplit() => " | ";
+        private string AddSplit() => ",";
 
         private void AppendWithSplit(StringBuilder builder ,string content)
         {
