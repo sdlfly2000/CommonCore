@@ -23,7 +23,7 @@ $projectFile = [xml](Get-Content -path $projectFileName)
 $version = $projectFile.Project.PropertyGroup.Version
 
 # Create Package
-$cmdline = "dotnet pack --no-build --verbosity n"
+$cmdline = "dotnet pack --verbosity n"
 Write-Host $cmdline
 CMD.exe /c $cmdline
 

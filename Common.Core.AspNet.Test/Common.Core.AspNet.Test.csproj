@@ -1,10 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Attributes\**" />
+    <Compile Remove="Common\**" />
+    <Compile Remove="Interceptors\**" />
+    <Content Remove="Attributes\**" />
+    <Content Remove="Common\**" />
+    <Content Remove="Interceptors\**" />
+    <EmbeddedResource Remove="Attributes\**" />
+    <EmbeddedResource Remove="Common\**" />
+    <EmbeddedResource Remove="Interceptors\**" />
+    <None Remove="Attributes\**" />
+    <None Remove="Common\**" />
+    <None Remove="Interceptors\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="logFile.log" />
@@ -12,12 +27,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Attributes\" />
-    <Folder Include="Common\" />
-    <Folder Include="Interceptors\" />
   </ItemGroup>
 
 </Project>

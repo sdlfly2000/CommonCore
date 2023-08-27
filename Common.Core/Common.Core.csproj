@@ -1,6 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <PackageId>IdeaActivator.Common.Core</PackageId>
     <Authors>IdeaActivator</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -29,8 +29,5 @@
   </ItemGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
     <Exec Command="Powershell.exe -ExecutionPolicy Bypass -Command .\Scripts\SetVersion.ps1" />
-  </Target>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="Powershell.exe -ExecutionPolicy Bypass -Command .\Scripts\ToNuget.ps1" />
   </Target>
 </Project>
