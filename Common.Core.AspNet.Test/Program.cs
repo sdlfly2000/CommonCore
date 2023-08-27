@@ -8,6 +8,7 @@ builder.Services
     .AddMemoryCache()
     .AddLogging(config => 
     {
+        config.ClearProviders();
         config.AddProvider(new Log2FileProvider(builder.Configuration));
     })
     .RegisterDomain("Common.Core.AspNet.Test")
