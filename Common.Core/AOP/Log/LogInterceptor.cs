@@ -1,7 +1,6 @@
 ﻿using Castle.DynamicProxy;
 using Common.Core.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 
 namespace Common.Core.AOP.Log
 {
@@ -23,10 +22,26 @@ namespace Common.Core.AOP.Log
                 return;
             }
 
-            _logger.LogTrace("Executing: {0}", invocation.MethodInvocationTarget.Name);
+            var activityName = GetActivityName(invocation.MethodInvocationTarget.GetCustomAttributes(typeof(LogTraceAttribute), false));
+
             invocation.Proceed();
-            _logger.LogTrace("With Result: {0}", JsonConvert.SerializeObject(invocation.ReturnValue));
-            _logger.LogTrace("Exiting: {0}", invocation.MethodInvocationTarget.Name);  
+
+            if (activityName != string.Empty)
+            {
+                _logger.LogTrace("Complete: {0}", activityName);
+            }
         }
+
+        #region Priviate Method
+        private string GetActivityName(object[] attributes)
+        {
+            if((attributes.Length > 1) || (attributes.Length == 0))
+            {
+                return string.Empty;
+            }
+
+            return (attributes[0] as LogTraceAttribute)!.ActivityName;
+        }
+        #endregion
     }
 }

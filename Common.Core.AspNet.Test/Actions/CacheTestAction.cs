@@ -17,7 +17,7 @@ namespace Common.Core.AspNet.Test.Actions
         }
 
         [CacheMethod]
-        [LogTrace]
+        [LogTrace(activityName:"CreateObjectActivity")]
         public CachedObject CreateObject(CachedObject cachedObject)
         {
             return cachedObject;
