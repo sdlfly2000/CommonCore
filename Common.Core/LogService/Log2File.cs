@@ -1,12 +1,9 @@
-﻿using Common.Core.LogService.Models;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Common.Core.LogService
 {
@@ -73,27 +70,7 @@ namespace Common.Core.LogService
             _logEntiries.Add(formatter(state, exception));
 
             if (_logEntiries.Count >= _entriesPerWrite) AppendLogEntriesToLogFile(_logEntiries);
-        }
-
-        public void LogActivity(IActivityLog log)
-        {
-            // Log Title: DateTimeStamp,LogLevel,TraceId,ActivityName,ActivityVector,Passed,Exception
-
-            var entryBuilder = new StringBuilder();
-
-            AppendWithSplit(entryBuilder, DateTime.UtcNow.ToString());
-            AppendWithSplit(entryBuilder, LogLevel.Information.ToString());
-            AppendWithSplit(entryBuilder, log.TraceId);
-            AppendWithSplit(entryBuilder, log.ActivityName);
-            AppendWithSplit(entryBuilder, log.ActivityVector);
-            AppendWithSplit(entryBuilder, log.Passed.ToString());
-            AppendWithSplit(entryBuilder, log.Exception);
-
-            Log(LogLevel.Information, default(EventId), entryBuilder.ToString(), null, (context, ex) =>
-            {
-                return context;
-            });
-        }
+        }            
 
         public void Dispose()
         {
@@ -101,13 +78,6 @@ namespace Common.Core.LogService
         }
 
         #region Private Methods
-
-        private string AddSplit() => ",";
-
-        private void AppendWithSplit(StringBuilder builder ,string content)
-        {
-            builder.Append(content).Append(AddSplit());
-        }
 
         private void AppendLogEntriesToLogFile(IList<string> logEntries)
         {
@@ -127,10 +97,11 @@ namespace Common.Core.LogService
 
         private void DoLog(LogLevel logLevel, string message)
         {
-            Log(logLevel, default(EventId), message, null, (context, ex) =>
-            {
-                return context;
-            });
+            return;
+            //Log(logLevel, default(EventId), message, null, (context, ex) =>
+            //{
+            //    return context;
+            //});
         }
 
         #endregion

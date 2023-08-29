@@ -1,6 +1,12 @@
 ﻿using Castle.DynamicProxy;
 using Common.Core.DependencyInjection;
+using Common.Core.LogService;
+using Common.Core.LogService.Models;
 using Microsoft.Extensions.Logging;
+using System.Text;
+using System;
+using System.Reflection.Metadata;
+using Microsoft.Extensions.Primitives;
 
 namespace Common.Core.AOP.Log
 {
@@ -8,6 +14,8 @@ namespace Common.Core.AOP.Log
     public class LogInterceptor : ILogInterceptor
     {
         private readonly ILogger<LogInterceptor> _logger;
+
+        private const string SPLIT = ",";
 
         public LogInterceptor(ILogger<LogInterceptor> logger)
         {
@@ -26,13 +34,34 @@ namespace Common.Core.AOP.Log
 
             invocation.Proceed();
 
-            if (activityName != string.Empty)
+            var activityLog = new ActivityLog()
             {
-                _logger.LogTrace("Complete: {0}", activityName);
-            }
+                ActivityName = activityName,
+                ActivityVector = string.Empty,
+                Passed = 1,
+                TraceId = string.Empty,
+                Exception = string.Empty
+            };
+
+            _logger.Log(LogLevel.Information, eventId: default, activityLog, exception: null, (log, ex) =>
+            {            
+                // Log Title: DateTimeStamp,LogLevel,TraceId,ActivityName,ActivityVector,Passed,Exception
+
+                var entryBuilder = new StringBuilder();
+                entryBuilder.Append(DateTime.UtcNow.ToString()).Append(SPLIT);
+                entryBuilder.Append(LogLevel.Information.ToString()).Append(SPLIT);
+                entryBuilder.Append(log.TraceId).Append(SPLIT);
+                entryBuilder.Append(log.ActivityName).Append(SPLIT);
+                entryBuilder.Append(log.ActivityVector).Append(SPLIT);
+                entryBuilder.Append(log.Passed.ToString()).Append(SPLIT);
+                entryBuilder.Append(log.Exception).Append(SPLIT);
+
+                return entryBuilder.ToString();
+            });            
         }
 
         #region Priviate Method
+
         private string GetActivityName(object[] attributes)
         {
             if((attributes.Length > 1) || (attributes.Length == 0))
@@ -42,6 +71,7 @@ namespace Common.Core.AOP.Log
 
             return (attributes[0] as LogTraceAttribute)!.ActivityName;
         }
+
         #endregion
     }
 }

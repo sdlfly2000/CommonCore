@@ -1,5 +1,4 @@
-﻿using Common.Core.LogService.Models;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 
 namespace Common.Core.LogService
@@ -10,7 +9,5 @@ namespace Common.Core.LogService
         void LogTrace(string information);
         void LogDebug(string information);
         void LogError(string information);
-
-        void LogActivity(IActivityLog log);
     }
 }
