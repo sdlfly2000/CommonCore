@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Common.Core.LogService.Models;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Common.Core.LogService
 {
@@ -18,6 +20,8 @@ namespace Common.Core.LogService
         private IList<string> _logEntiries;
 
         private static object _writeLock = new object();
+
+        private const string SPLIT = ",";
 
         public Log2File(IConfiguration configuration)
         {
@@ -40,26 +44,6 @@ namespace Common.Core.LogService
             return _logLevel <= logLevel;
         }
 
-        public void LogInformation(string information)
-        {
-            DoLog(LogLevel.Information, information);
-        }
-
-        public void LogTrace(string information)
-        {
-            DoLog(LogLevel.Trace, information);
-        }
-
-        public void LogDebug(string information)
-        {
-            DoLog(LogLevel.Debug, information);
-        }
-
-        public void LogError(string information)
-        {
-            DoLog(LogLevel.Error, information);
-        }
-
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
             if (!IsEnabled(logLevel))
@@ -67,7 +51,16 @@ namespace Common.Core.LogService
                 return;
             }
 
-            _logEntiries.Add(formatter(state, exception));
+            var context = FormatDefaultLogEntry(logLevel, eventId, state, exception, formatter);
+
+            if (state is IActivityLog) 
+            {
+                context = FormatActivityLogEntry(state, context); 
+            }
+
+            context = RemoveLastSplit(context);
+
+            _logEntiries.Add(context.ToString());                        
 
             if (_logEntiries.Count >= _entriesPerWrite) AppendLogEntriesToLogFile(_logEntiries);
         }            
@@ -91,17 +84,44 @@ namespace Common.Core.LogService
             }
             catch(Exception ex)
             {
-                LogError(ex.Message);
+                Log(LogLevel.Error, default, string.Empty, ex, (state, ex) => string.Empty); 
             }
         }
 
-        private void DoLog(LogLevel logLevel, string message)
+        private StringBuilder FormatDefaultLogEntry<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
-            return;
-            //Log(logLevel, default(EventId), message, null, (context, ex) =>
-            //{
-            //    return context;
-            //});
+            // Log Title: DateTimeStamp,LogLevel,EventId,Passed,Exception,Formatted
+
+            var entryBuilder = new StringBuilder();
+            entryBuilder.Append(DateTime.UtcNow.ToString()).Append(SPLIT);
+            entryBuilder.Append(LogLevel.Information.ToString()).Append(SPLIT);
+            entryBuilder.Append(eventId.Name).Append(SPLIT);
+            entryBuilder.Append(exception == null ? 0 : 1).Append(SPLIT);
+            entryBuilder.Append(exception == null ? string.Empty : exception.Message).Append(SPLIT);
+            entryBuilder.Append(formatter(state, exception)).Append(SPLIT);
+
+            return entryBuilder;
+        }
+
+        private StringBuilder FormatActivityLogEntry<TState>(TState state, StringBuilder stringBuilder)
+        {
+            // Log Title: DateTimeStamp,LogLevel,EventId,Passed,Exception,Formatted,TraceId,ActivityName,ActivityVector
+
+            if (state == null)
+            {
+                return stringBuilder;
+            }
+
+            stringBuilder.Append(((IActivityLog)state).TraceId).Append(SPLIT);
+            stringBuilder.Append(((IActivityLog)state).ActivityName).Append(SPLIT);
+            stringBuilder.Append(((IActivityLog)state).ActivityVector).Append(SPLIT);
+
+            return stringBuilder;
+        }
+
+        private StringBuilder RemoveLastSplit(StringBuilder stringBuilder)
+        {
+            return stringBuilder.Remove(stringBuilder.Length - 1, 1);
         }
 
         #endregion

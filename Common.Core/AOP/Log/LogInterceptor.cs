@@ -34,30 +34,14 @@ namespace Common.Core.AOP.Log
 
             invocation.Proceed();
 
-            var activityLog = new ActivityLog()
+            _logger.LogActivity(new ActivityLog()
             {
                 ActivityName = activityName,
                 ActivityVector = string.Empty,
                 Passed = 1,
                 TraceId = string.Empty,
                 Exception = string.Empty
-            };
-
-            _logger.Log(LogLevel.Information, eventId: default, activityLog, exception: null, (log, ex) =>
-            {            
-                // Log Title: DateTimeStamp,LogLevel,TraceId,ActivityName,ActivityVector,Passed,Exception
-
-                var entryBuilder = new StringBuilder();
-                entryBuilder.Append(DateTime.UtcNow.ToString()).Append(SPLIT);
-                entryBuilder.Append(LogLevel.Information.ToString()).Append(SPLIT);
-                entryBuilder.Append(log.TraceId).Append(SPLIT);
-                entryBuilder.Append(log.ActivityName).Append(SPLIT);
-                entryBuilder.Append(log.ActivityVector).Append(SPLIT);
-                entryBuilder.Append(log.Passed.ToString()).Append(SPLIT);
-                entryBuilder.Append(log.Exception).Append(SPLIT);
-
-                return entryBuilder.ToString();
-            });            
+            });
         }
 
         #region Priviate Method

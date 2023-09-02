@@ -9,21 +9,9 @@ namespace Common.Core.LogService
     {
         public static void LogActivity(this ILogger logger, IActivityLog log)
         {
-            // Log Title: DateTimeStamp,LogLevel,TraceId,ActivityName,ActivityVector,Passed,Exception
-
-            var entryBuilder = new StringBuilder();
-
-            AppendWithSplit(entryBuilder, DateTime.UtcNow.ToString());
-            AppendWithSplit(entryBuilder, LogLevel.Information.ToString());
-            AppendWithSplit(entryBuilder, log.TraceId);
-            AppendWithSplit(entryBuilder, log.ActivityName);
-            AppendWithSplit(entryBuilder, log.ActivityVector);
-            AppendWithSplit(entryBuilder, log.Passed.ToString());
-            AppendWithSplit(entryBuilder, log.Exception);
-
-            logger.Log(LogLevel.Information, default(EventId), entryBuilder.ToString(), null, (context, ex) =>
+            logger.Log(LogLevel.Information, default(EventId), log, null, (context, ex) =>
             {
-                return context;
+                return string.Empty;
             });
         }
 
