@@ -6,6 +6,9 @@
 # No Parameter
 Param()
 
+# Upgrade Project Version
+Powershell.exe .\Scripts\SetVersion.ps1
+
 # Get NugetKey
 Powershell.exe .\Scripts\FtpDownload.ps1
 $nugetSettingFileName = "app.json"
@@ -22,8 +25,13 @@ $projectFileName = "Common.Core.csproj"
 $projectFile = [xml](Get-Content -path $projectFileName)
 $version = $projectFile.Project.PropertyGroup.Version
 
+# Create Build Release
+$cmdline = "dotnet build --configuration Release"
+Write-Host $cmdline
+CMD.exe /c $cmdline
+
 # Create Package
-$cmdline = "dotnet pack --verbosity n"
+$cmdline = "dotnet pack --no-build --verbosity n"
 Write-Host $cmdline
 CMD.exe /c $cmdline
 
@@ -32,7 +40,7 @@ Write-Host "-Upload Package to Nuget-"
 # Push to Nuget if uploadToNuget is true
 if($isUploadToNuget){	
 	# CMD to Push Nuget
-	$cmdline = "dotnet nuget push .\bin\Debug\IdeaActivator.Common.Core.$version.nupkg --api-key $nugetApiKey --source https://api.nuget.org/v3/index.json"
+	$cmdline = "dotnet nuget push .\bin\Release\IdeaActivator.Common.Core.$version.nupkg --api-key $nugetApiKey --source https://api.nuget.org/v3/index.json"
 	Write-Host $cmdline
 	CMD.exe /c $cmdline
 }else{
