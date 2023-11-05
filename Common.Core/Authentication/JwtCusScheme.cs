@@ -43,9 +43,9 @@ namespace Common.Core.Authentication
         {
         }
 
-        protected override Task<AuthenticateResult> HandleAuthenticateAsync()
+        protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var remoteIpAdress = Context.Connection.RemoteIpAddress?.ToString();
+            var remoteIpAdress = Context.Connection.RemoteIpAddress?.MapToIPv4().ToString();
             var userAgent = Request.Headers.UserAgent.ToString();
 
             var auth = Request.Headers.Authorization.ToString();
@@ -54,16 +54,16 @@ namespace Common.Core.Authentication
 
             if (token == null)
             {
-                return Task.FromResult(AuthenticateResult.NoResult());
+                return AuthenticateResult.NoResult();
             }
 
             if (remoteIpAdress != token[ClaimTypes.Uri]?.Value<string>()
                 || userAgent != token[ClaimTypes.UserData]?.Value<string>())
             {
-                return Task.FromResult(AuthenticateResult.NoResult());
+                return AuthenticateResult.NoResult();
             }
 
-            return base.HandleAuthenticateAsync();
+            return await base.HandleAuthenticateAsync();
         }
 
         #region Private Methods
@@ -94,7 +94,7 @@ namespace Common.Core.Authentication
         private byte[] ConvertBase64ToObject(string base64)
         {
             if (base64.Length % 4 != 0)
-                base64 += new String('=', 4 - base64.Length % 4);
+                base64 += new string('=', 4 - base64.Length % 4);
 
             return Convert.FromBase64String(base64);
         }
