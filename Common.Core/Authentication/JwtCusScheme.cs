@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -38,9 +39,12 @@ namespace Common.Core.Authentication
 
     public class JwtCustomHandler : JwtBearerHandler
     {
-        public JwtCustomHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock)
+        private readonly IMemoryCache _memoryCache;
+
+        public JwtCustomHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, IMemoryCache memoryCache)
             : base(options, logger, encoder, clock)
         {
+            _memoryCache = memoryCache;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -48,9 +52,13 @@ namespace Common.Core.Authentication
             var remoteIpAdress = Context.Connection.RemoteIpAddress?.MapToIPv4().ToString();
             var userAgent = Request.Headers.UserAgent.ToString();
 
-            var auth = Request.Headers.Authorization.ToString();
 
-            var token = GetTokenBody(auth) as JObject;
+            if (!IsActicatedOrEmpty(remoteIpAdress!))
+            {
+                return AuthenticateResult.NoResult();
+            }
+
+            var token = GetTokenBody(Request.Headers.Authorization.ToString()) as JObject;
 
             if (token == null)
             {
@@ -63,10 +71,37 @@ namespace Common.Core.Authentication
                 return AuthenticateResult.NoResult();
             }
 
-            return await base.HandleAuthenticateAsync();
+            var authResult = await base.HandleAuthenticateAsync();
+
+            if (authResult.Succeeded)
+            {
+                var key = CreateKey(remoteIpAdress, token[ClaimTypes.NameIdentifier]?.Value<string>());
+
+                var entry = _memoryCache.CreateEntry(key);
+                if (entry != null)
+                {
+                    entry.SetValue(true);
+                    entry.SetSlidingExpiration(TimeSpan.FromDays(1));
+                }
+            }
+
+            return authResult;
         }
 
         #region Private Methods
+
+        private bool IsActicatedOrEmpty(string ipAddress)
+        {
+            if (_memoryCache.TryGetValue(ipAddress, out var isValid))
+            {
+                if ((bool)isValid! == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
 
         private object? GetTokenBody(string auth)
         {
@@ -94,9 +129,21 @@ namespace Common.Core.Authentication
         private byte[] ConvertBase64ToObject(string base64)
         {
             if (base64.Length % 4 != 0)
-                base64 += new string('=', 4 - base64.Length % 4);
+                base64 += new String('=', 4 - base64.Length % 4);
 
             return Convert.FromBase64String(base64);
+        }
+
+        private string CreateKey(string? ip, string? userId)
+        {
+            if (userId == null)
+            {
+                return String.Empty;
+            }
+
+            var key = new StringBuilder(ip);
+            key.Append('|').Append(userId);
+            return key.ToString();
         }
 
         #endregion
