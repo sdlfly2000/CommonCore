@@ -1,16 +1,18 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Common.Core.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 using System;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Common.Core.Authentication
 {
@@ -52,15 +54,18 @@ namespace Common.Core.Authentication
             var remoteIpAdress = Context.Connection.RemoteIpAddress?.MapToIPv4().ToString();
             var userAgent = Request.Headers.UserAgent.ToString();
 
+            var token = GetTokenBody(Request.Headers.Authorization.ToString()) as JObject;
 
-            if (!IsActicatedOrEmpty(remoteIpAdress!))
+            if (token == null)
             {
                 return AuthenticateResult.NoResult();
             }
 
-            var token = GetTokenBody(Request.Headers.Authorization.ToString()) as JObject;
+            var cacheJwtKey = CreateKey(remoteIpAdress,
+                token[ClaimTypes.NameIdentifier]?.Value<string>(),
+                token["exp"]?.Value<string>());
 
-            if (token == null)
+            if (!IsActicatedOrEmpty(cacheJwtKey))
             {
                 return AuthenticateResult.NoResult();
             }
@@ -75,24 +80,25 @@ namespace Common.Core.Authentication
 
             if (authResult.Succeeded)
             {
-                var key = CreateKey(remoteIpAdress, token[ClaimTypes.NameIdentifier]?.Value<string>());
-
-                var entry = _memoryCache.CreateEntry(key);
-                if (entry != null)
-                {
-                    entry.SetValue(true);
-                    entry.SetSlidingExpiration(TimeSpan.FromDays(1));
-                }
+                var isValid = _memoryCache.GetOrCreate(cacheJwtKey,
+                    (entry) =>
+                    {
+                        entry.SetValue(true);
+                        entry.SetSlidingExpiration(TimeSpan.FromDays(1));
+                        return true;
+                    });
             }
+
+            Context.Items.Add("CacheJwtKey", cacheJwtKey);
 
             return authResult;
         }
 
         #region Private Methods
 
-        private bool IsActicatedOrEmpty(string ipAddress)
+        private bool IsActicatedOrEmpty(string cacheKey)
         {
-            if (_memoryCache.TryGetValue(ipAddress, out var isValid))
+            if (_memoryCache.TryGetValue(cacheKey, out var isValid))
             {
                 if ((bool)isValid! == false)
                 {
@@ -134,16 +140,12 @@ namespace Common.Core.Authentication
             return Convert.FromBase64String(base64);
         }
 
-        private string CreateKey(string? ip, string? userId)
+        private string CreateKey(string? ip, string? userId, string? timeStamp)
         {
-            if (userId == null)
-            {
-                return String.Empty;
-            }
-
-            var key = new StringBuilder(ip);
-            key.Append('|').Append(userId);
-            return key.ToString();
+            return String.Join('|',
+                new string?[] { ip, userId, timeStamp }
+                    .Where(e => !e.IsNullOrEmpty())
+                    .ToArray());
         }
 
         #endregion
