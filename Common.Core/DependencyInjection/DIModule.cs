@@ -24,13 +24,13 @@ namespace Common.Core.DependencyInjection
                     switch (serviceType)
                     {
                         case ServiceType.Scoped:
-                            services.AddScoped(iFace, impl);
+                            if (iFace == null) { services.AddScoped(impl);  } else { services.AddScoped(iFace, impl);}
                             break;
                         case ServiceType.Singleton:
-                            services.AddSingleton(iFace, impl);
+                            if (iFace == null) { services.AddSingleton(impl); } else { services.AddSingleton(iFace, impl); }
                             break;
                         default:
-                            services.AddTransient(iFace, impl);
+                            if (iFace == null) { services.AddTransient(impl); } else { services.AddTransient(iFace, impl); }
                             break;
                     }                    
                 }
