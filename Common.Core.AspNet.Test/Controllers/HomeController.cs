@@ -15,24 +15,27 @@ namespace Common.Core.AspNet.Test.Controllers
         private readonly ILogTestAction _logTestAction;
         private readonly ICacheTestAction _cacheTestAction;
         private readonly ICacheService _cacheService;
+        private readonly ImplementToServiceAction _implAction;
 
         public HomeController(
             ILogger<HomeController> logger, 
             ILogTestAction logTestAction, 
             ICacheTestAction cacheTestAction,
-            ICacheService cacheService)
+            ICacheService cacheService,
+            ImplementToServiceAction implAction)
         {
             _logger = logger;
             _logTestAction = logTestAction;
             _cacheTestAction = cacheTestAction;
             _cacheService = cacheService;
+            _implAction = implAction;
         }
 
         [HttpGet("index")]
         public IActionResult Index()
         {
             _logger.LogInformation("Testing inside");
-            return new JsonResult(_logTestAction.TestLog());
+            return Ok(_implAction.WhoAmI());
         }
 
         [HttpGet("cached")]
