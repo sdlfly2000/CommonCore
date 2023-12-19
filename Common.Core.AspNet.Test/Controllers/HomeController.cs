@@ -1,9 +1,9 @@
 ﻿using Common.Core.AspNet.Test.Actions;
+using Common.Core.AspNet.Test.CQRS;
 using Common.Core.AspNet.Test.Models;
 using Common.Core.Cache;
-using Common.Core.LogService;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System.ComponentModel.Design;
 
 namespace Common.Core.AspNet.Test.Controllers
 {
@@ -16,19 +16,22 @@ namespace Common.Core.AspNet.Test.Controllers
         private readonly ICacheTestAction _cacheTestAction;
         private readonly ICacheService _cacheService;
         private readonly ImplementToServiceAction _implAction;
+        private readonly IEventBus _eventBus;
 
         public HomeController(
             ILogger<HomeController> logger, 
             ILogTestAction logTestAction, 
             ICacheTestAction cacheTestAction,
             ICacheService cacheService,
-            ImplementToServiceAction implAction)
+            ImplementToServiceAction implAction,
+            IEventBus eventBus)
         {
             _logger = logger;
             _logTestAction = logTestAction;
             _cacheTestAction = cacheTestAction;
             _cacheService = cacheService;
             _implAction = implAction;
+            _eventBus = eventBus;
         }
 
         [HttpGet("index")]
@@ -59,6 +62,14 @@ namespace Common.Core.AspNet.Test.Controllers
             _logger.LogInformation("Testing MemoryCache");
             var cached = _cacheService.Get("CachedObject1234");
             
+            return Ok();
+        }
+
+        [HttpGet("Log")]
+        public IActionResult Log()
+        {
+            var logRequest = new LogRequest("Test Log");
+            var response = _eventBus.Send<LogRequest, LogResponse>(logRequest);
             return Ok();
         }
     }

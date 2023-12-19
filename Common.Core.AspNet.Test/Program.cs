@@ -1,4 +1,5 @@
 ﻿using Common.Core.AOP;
+using Common.Core.AspNet.Test.CQRS;
 using Common.Core.DependencyInjection;
 using Common.Core.LogService;
 
@@ -13,6 +14,8 @@ builder.Services
     })
     .RegisterDomain("Common.Core.AspNet.Test")
     .RegisterInterceptor(enableLog: true, enableCache: true, null, "Common.Core.AspNet.Test");
+
+RegisterCQRS.Register("Common.Core.AspNet.Test");
 
 builder.Services.AddControllers();
 
