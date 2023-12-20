@@ -19,7 +19,6 @@ namespace Common.Core.AspNet.Test.CQRS
             var requestHandler = _services.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
 
             return requestHandler.Handle(request);
-
         }
     }
 }
