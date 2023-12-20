@@ -1,6 +1,8 @@
-﻿using Common.Core.DependencyInjection;
+﻿using Common.Core.CQRS.Request;
+using Common.Core.CQRS.Shared;
+using Common.Core.DependencyInjection;
 
-namespace Common.Core.AspNet.Test.CQRS
+namespace Common.Core.CQRS
 {
     [ServiceLocate(typeof(IEventBus), ServiceType.Scoped)]
     public class EventBus : IEventBus
@@ -12,9 +14,9 @@ namespace Common.Core.AspNet.Test.CQRS
             _services = services;
         }
 
-        public IResponse Send<TRequest, TResponse>(TRequest request) 
+        public IResponse Send<TRequest, TResponse>(TRequest request)
             where TResponse : IResponse
-            where TRequest: IRequest 
+            where TRequest : IRequest
         {
             var requestHandler = _services.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
 

@@ -1,4 +1,5 @@
-﻿using Common.Core.DependencyInjection;
+﻿using Common.Core.CQRS.Request;
+using Common.Core.DependencyInjection;
 
 namespace Common.Core.AspNet.Test.CQRS
 {

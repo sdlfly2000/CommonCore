@@ -1,4 +1,4 @@
-﻿namespace Common.Core.AspNet.Test.CQRS
+﻿namespace Common.Core.CQRS.Shared
 {
     public interface IRequest
     {

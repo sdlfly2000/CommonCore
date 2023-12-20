@@ -1,4 +1,4 @@
-﻿namespace Common.Core.AspNet.Test.CQRS
+﻿namespace Common.Core.CQRS.Request
 {
     public interface IRequestHandler<in IRequest, out TResponse>
     {
