@@ -1,4 +1,4 @@
-﻿using Common.Core.CQRS.Shared;
+﻿using Common.Core.CQRS.Request;
 
 namespace Common.Core.AspNet.Test.CQRS
 {

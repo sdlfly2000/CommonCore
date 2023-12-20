@@ -1,5 +1,5 @@
 ﻿using Common.Core.CQRS.Request;
-using Common.Core.CQRS.Shared;
+using Common.Core.CQRS.Request;
 using Common.Core.DependencyInjection;
 
 namespace Common.Core.CQRS

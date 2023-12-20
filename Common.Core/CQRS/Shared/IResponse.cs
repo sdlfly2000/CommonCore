@@ -1,4 +1,4 @@
-﻿namespace Common.Core.CQRS.Shared
+﻿namespace Common.Core.CQRS.Request
 {
     public interface IResponse
     {

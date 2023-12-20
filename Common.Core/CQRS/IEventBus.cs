@@ -1,4 +1,5 @@
-﻿using Common.Core.CQRS.Shared;
+﻿using Common.Core.CQRS.Request;
+using Common.Core.CQRS.Request;
 
 namespace Common.Core.CQRS
 {
