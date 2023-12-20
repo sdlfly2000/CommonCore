@@ -1,7 +1,9 @@
-﻿using Common.Core.CQRS.Request;
+﻿using Common.Core.CQRS.Notification;
+using Common.Core.CQRS.Request;
 using Common.Core.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 
 namespace Common.Core.CQRS
 {
@@ -13,6 +15,22 @@ namespace Common.Core.CQRS
         public EventBus(IServiceProvider services)
         {
             _services = services;
+        }
+
+        public List<IResponse> Publish<TRequest, TResponse>(TRequest request)
+            where TRequest : INotification
+            where TResponse : IResponse
+        {
+            var responses = new List<IResponse>();
+
+            var notificationHandlers = _services.GetServices<INotificationHandler<TRequest, TResponse>>();
+
+            foreach (var handler in notificationHandlers)
+            {
+                responses.Add(handler.Handle(request));
+            }
+
+            return responses;
         }
 
         public IResponse Send<TRequest, TResponse>(TRequest request)

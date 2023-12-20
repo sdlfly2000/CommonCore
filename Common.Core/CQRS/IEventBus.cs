@@ -1,4 +1,6 @@
-﻿using Common.Core.CQRS.Request;
+﻿using Common.Core.CQRS.Notification;
+using Common.Core.CQRS.Request;
+using System.Collections.Generic;
 
 namespace Common.Core.CQRS
 {
@@ -7,5 +9,9 @@ namespace Common.Core.CQRS
         IResponse Send<TRequest, TResponse>(TRequest request)
             where TResponse : IResponse
             where TRequest : IRequest;
+
+        List<IResponse> Publish<TRequest, TResponse>(TRequest request)
+            where TResponse : IResponse
+            where TRequest : INotification;
     }
 }
