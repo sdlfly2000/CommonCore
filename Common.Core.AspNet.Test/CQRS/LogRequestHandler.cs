@@ -2,7 +2,6 @@
 
 namespace Common.Core.AspNet.Test.CQRS
 {
-    [CQRSRequestHandler(typeof(LogRequest), typeof(IRequestHandler<LogRequest, LogResponse>))]
     [ServiceLocate(typeof(IRequestHandler<LogRequest, LogResponse>))]
     public sealed class LogRequestHandler : IRequestHandler<LogRequest, LogResponse>
     {

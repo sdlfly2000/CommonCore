@@ -16,12 +16,7 @@ namespace Common.Core.AspNet.Test.CQRS
             where TResponse : IResponse
             where TRequest: IRequest 
         {
-            if (!RegisterCQRS.RequestHandlerMapper.TryGetValue(request.GetType(), out var requestHandlerType))
-            {
-                throw new InvalidOperationException($"Request Handler does not exist for Request {request.GetType().Name}.");
-            }
-
-            var requestHandler = (IRequestHandler<TRequest, TResponse>)_services.GetRequiredService(requestHandlerType);
+            var requestHandler = _services.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
 
             return requestHandler.Handle(request);
 

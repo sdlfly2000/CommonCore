@@ -15,8 +15,6 @@ builder.Services
     .RegisterDomain("Common.Core.AspNet.Test")
     .RegisterInterceptor(enableLog: true, enableCache: true, null, "Common.Core.AspNet.Test");
 
-RegisterCQRS.Register("Common.Core.AspNet.Test");
-
 builder.Services.AddControllers();
 
 var app = builder.Build();
