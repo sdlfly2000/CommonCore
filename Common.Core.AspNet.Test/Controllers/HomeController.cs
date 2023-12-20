@@ -2,8 +2,8 @@
 using Common.Core.AspNet.Test.CQRS;
 using Common.Core.AspNet.Test.Models;
 using Common.Core.Cache;
+using Common.Core.CQRS;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.Design;
 
 namespace Common.Core.AspNet.Test.Controllers
 {

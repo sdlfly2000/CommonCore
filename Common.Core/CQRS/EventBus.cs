@@ -1,6 +1,7 @@
 ﻿using Common.Core.CQRS.Request;
-using Common.Core.CQRS.Request;
 using Common.Core.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace Common.Core.CQRS
 {
