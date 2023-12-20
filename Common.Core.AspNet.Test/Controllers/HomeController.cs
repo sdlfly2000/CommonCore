@@ -3,6 +3,7 @@ using Common.Core.AspNet.Test.CQRS;
 using Common.Core.AspNet.Test.Models;
 using Common.Core.Cache;
 using Common.Core.CQRS;
+using Common.Core.CQRS.Request;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Common.Core.AspNet.Test.Controllers
@@ -70,6 +71,14 @@ namespace Common.Core.AspNet.Test.Controllers
         {
             var logRequest = new LogRequest("Test Log");
             var response = _eventBus.Send<LogRequest, LogResponse>(logRequest);
+            return Ok();
+        }
+
+        [HttpGet("Notification")]
+        public IActionResult Notification()
+        {
+            var notification = new LogNotification();
+            var responses = _eventBus.Publish<LogNotification, IResponse>(notification);
             return Ok();
         }
     }
