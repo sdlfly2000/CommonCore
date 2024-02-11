@@ -1,6 +1,8 @@
-﻿using Common.Core.AspNet.Test.Actions;
+﻿using Common.Core.AOP.Cache;
+using Common.Core.AspNet.Test.Actions;
 using Common.Core.AspNet.Test.CQRS;
 using Common.Core.AspNet.Test.Models;
+using Common.Core.AspNet.Test.Validators;
 using Common.Core.Cache;
 using Common.Core.CQRS;
 using Common.Core.CQRS.Request;
@@ -18,6 +20,7 @@ namespace Common.Core.AspNet.Test.Controllers
         private readonly ICacheService _cacheService;
         private readonly ImplementToServiceAction _implAction;
         private readonly IEventBus _eventBus;
+        private readonly IEnumerable<IValidator<IReference>> _validators;
 
         public HomeController(
             ILogger<HomeController> logger, 
@@ -25,6 +28,7 @@ namespace Common.Core.AspNet.Test.Controllers
             ICacheTestAction cacheTestAction,
             ICacheService cacheService,
             ImplementToServiceAction implAction,
+            IEnumerable<IValidator<IReference>> validators,
             IEventBus eventBus)
         {
             _logger = logger;
@@ -33,6 +37,7 @@ namespace Common.Core.AspNet.Test.Controllers
             _cacheService = cacheService;
             _implAction = implAction;
             _eventBus = eventBus;
+            _validators = validators;
         }
 
         [HttpGet("index")]
@@ -79,6 +84,17 @@ namespace Common.Core.AspNet.Test.Controllers
         {
             var notification = new LogNotification();
             var responses = _eventBus.Publish<LogNotification, IResponse>(notification);
+            return Ok();
+        }
+
+        [HttpGet("Validators")]
+        public IActionResult Validators()
+        {
+            foreach(var validator in _validators)
+            {
+                validator.Validate();
+            }
+
             return Ok();
         }
     }

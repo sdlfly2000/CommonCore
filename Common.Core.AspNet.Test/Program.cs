@@ -1,5 +1,4 @@
 ﻿using Common.Core.AOP;
-using Common.Core.AspNet.Test.CQRS;
 using Common.Core.DependencyInjection;
 using Common.Core.LogService;
 
