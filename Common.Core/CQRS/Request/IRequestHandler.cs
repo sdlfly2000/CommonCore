@@ -1,7 +1,9 @@
-﻿namespace Common.Core.CQRS.Request
+﻿using System.Threading.Tasks;
+
+namespace Common.Core.CQRS.Request
 {
-    public interface IRequestHandler<in IRequest, out TResponse>
+    public interface IRequestHandler<in IRequest, TResponse>
     {
-        TResponse Handle(IRequest request);
+        Task<TResponse> Handle(IRequest request);
     }
 }

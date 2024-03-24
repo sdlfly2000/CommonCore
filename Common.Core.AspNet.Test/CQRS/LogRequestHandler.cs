@@ -13,10 +13,10 @@ namespace Common.Core.AspNet.Test.CQRS
             _logger = logger;
         }
 
-        public LogResponse Handle(LogRequest request)
+        public async Task<LogResponse> Handle(LogRequest request)
         {
             _logger.LogInformation(request.Message);
-            return new LogResponse();
+            return await Task.FromResult(new LogResponse());
         }
     }
 }

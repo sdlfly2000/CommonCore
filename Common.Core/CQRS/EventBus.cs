@@ -39,7 +39,7 @@ namespace Common.Core.CQRS
         {
             var requestHandler = _services.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
 
-            return await Task.FromResult(requestHandler.Handle(request));
+            return await requestHandler.Handle(request);
         }
     }
 }
