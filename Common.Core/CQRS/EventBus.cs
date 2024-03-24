@@ -3,7 +3,10 @@ using Common.Core.CQRS.Request;
 using Common.Core.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Common.Core.CQRS
 {
@@ -17,29 +20,26 @@ namespace Common.Core.CQRS
             _services = services;
         }
 
-        public List<IResponse> Publish<TRequest, TResponse>(TRequest request)
+        public async Task<List<IResponse>> Publish<TRequest, TResponse>(TRequest request)
             where TRequest : INotification
             where TResponse : IResponse
         {
-            var responses = new List<IResponse>();
+            var responses = new ConcurrentBag<IResponse>();
 
             var notificationHandlers = _services.GetServices<INotificationHandler<TRequest, TResponse>>();
 
-            foreach (var handler in notificationHandlers)
-            {
-                responses.Add(handler.Handle(request));
-            }
+            Parallel.ForEach(notificationHandlers, (handler) => responses.Add(handler.Handle(request)));
 
-            return responses;
+            return await Task.FromResult(responses.ToList());
         }
 
-        public IResponse Send<TRequest, TResponse>(TRequest request)
+        public async Task<IResponse> Send<TRequest, TResponse>(TRequest request)
             where TResponse : IResponse
             where TRequest : IRequest
         {
             var requestHandler = _services.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
 
-            return requestHandler.Handle(request);
+            return await Task.FromResult(requestHandler.Handle(request));
         }
     }
 }
