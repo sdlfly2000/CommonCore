@@ -13,31 +13,38 @@ namespace Common.Core.CQRS
     [ServiceLocate(typeof(IEventBus), ServiceType.Scoped)]
     public class EventBus : IEventBus
     {
-        private readonly IServiceProvider _services;
+        private readonly IServiceProvider _serviceProvider;
 
-        public EventBus(IServiceProvider services)
+        public EventBus(IServiceProvider serviceProvider)
         {
-            _services = services;
+            _serviceProvider = serviceProvider;
         }
 
-        public async Task<List<IResponse>> Publish<TRequest, TResponse>(TRequest request)
-            where TRequest : INotification
+        public async Task<List<IResponse>> Publish<TNotification, TResponse>(TNotification request)
+            where TNotification : INotification
             where TResponse : IResponse
         {
             var responses = new ConcurrentBag<IResponse>();
 
-            var notificationHandlers = _services.GetServices<INotificationHandler<TRequest, TResponse>>();
+            var handlers = CQRSNotificationRegister.NotificationHandlers.GetValueOrDefault(request.GetType().Name);
 
-            Parallel.ForEach(notificationHandlers, (handler) => responses.Add(handler.Handle(request)));
+            var services = handlers?.Select(_serviceProvider.GetRequiredService);
 
-            return await Task.FromResult(responses.ToList());
+            foreach (var handler in handlers)
+            {
+                var service = _serviceProvider.GetRequiredService(handler) as dynamic;
+;
+                responses.Add(await service?.Handle(request));
+            }
+
+            return responses.ToList();
         }
 
         public async Task<IResponse> Send<TRequest, TResponse>(TRequest request)
             where TResponse : IResponse
             where TRequest : IRequest
         {
-            var requestHandler = _services.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
+            var requestHandler = _serviceProvider.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
 
             return await requestHandler.Handle(request);
         }

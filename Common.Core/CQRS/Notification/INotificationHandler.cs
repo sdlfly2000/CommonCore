@@ -1,7 +1,9 @@
-﻿namespace Common.Core.CQRS.Request
+﻿using System.Threading.Tasks;
+
+namespace Common.Core.CQRS.Request
 {
-    public interface INotificationHandler<in IRequest, out TResponse>
+    public interface INotificationHandler<in INotification, IResponse>
     {
-        TResponse Handle(IRequest request);
+        Task<IResponse> Handle(INotification request);
     }
 }

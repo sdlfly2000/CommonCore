@@ -1,9 +1,11 @@
 ﻿using Common.Core.CQRS.Request;
+using Common.Core.CQRS.Shared;
 using Common.Core.DependencyInjection;
 
 namespace Common.Core.AspNet.Test.CQRS
 {
-    [ServiceLocate(typeof(INotificationHandler<LogNotification, IResponse>))]
+    [ServiceLocate(typeof(INotificationHandler<LogNotification, LogResponse>))]
+    [CQRSNotificationHandler(nameof(LogNotification), typeof(INotificationHandler<LogNotification, LogResponse>))]
     public class LogNotificationHandler1 : INotificationHandler<LogNotification, LogResponse>
     {
         private readonly ILogger _logger;
@@ -13,10 +15,10 @@ namespace Common.Core.AspNet.Test.CQRS
             _logger = logger;
         }
 
-        public LogResponse Handle(LogNotification request)
+        public async Task<LogResponse> Handle(LogNotification request)
         {
             _logger.LogInformation("In Notification Handler 1");
-            return new LogResponse();
+            return await Task.FromResult(new LogResponse());
         }
     }
 }
