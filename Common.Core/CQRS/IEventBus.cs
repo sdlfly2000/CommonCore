@@ -7,7 +7,7 @@ namespace Common.Core.CQRS
 {
     public interface IEventBus
     {
-        Task<IResponse> Send<TRequest, TResponse>(TRequest request)
+        Task<TResponse> Send<TRequest, TResponse>(TRequest request)
             where TResponse : IResponse
             where TRequest : IRequest;
 

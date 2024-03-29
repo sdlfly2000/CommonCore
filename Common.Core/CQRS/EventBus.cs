@@ -40,7 +40,7 @@ namespace Common.Core.CQRS
             return responses.ToList();
         }
 
-        public async Task<IResponse> Send<TRequest, TResponse>(TRequest request)
+        public async Task<TResponse> Send<TRequest, TResponse>(TRequest request)
             where TResponse : IResponse
             where TRequest : IRequest
         {
