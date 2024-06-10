@@ -1,9 +1,10 @@
-﻿using Common.Core.CQRS.Request;
-using Common.Core.DependencyInjection;
+﻿using Common.Core.AOP;
+using Common.Core.AOP.Log;
+using Common.Core.CQRS.Request;
 
 namespace Common.Core.AspNet.Test.CQRS
 {
-    [ServiceLocate(typeof(IRequestHandler<LogRequest, LogResponse>))]
+    [AOPInterception(typeof(IRequestHandler<LogRequest, LogResponse>), typeof(LogRequestHandler))]
     public sealed class LogRequestHandler : IRequestHandler<LogRequest, LogResponse>
     {
         private readonly ILogger<LogRequestHandler> _logger;
@@ -13,6 +14,7 @@ namespace Common.Core.AspNet.Test.CQRS
             _logger = logger;
         }
 
+        [LogTrace(nameof(LogRequestHandler))]
         public async Task<LogResponse> Handle(LogRequest request)
         {
             _logger.LogInformation(request.Message);

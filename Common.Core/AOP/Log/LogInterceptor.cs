@@ -3,10 +3,7 @@ using Common.Core.DependencyInjection;
 using Common.Core.LogService;
 using Common.Core.LogService.Models;
 using Microsoft.Extensions.Logging;
-using System.Text;
-using System;
-using System.Reflection.Metadata;
-using Microsoft.Extensions.Primitives;
+using Common.Core.AOP.Extentions;
 
 namespace Common.Core.AOP.Log
 {
@@ -14,8 +11,6 @@ namespace Common.Core.AOP.Log
     public class LogInterceptor : ILogInterceptor
     {
         private readonly ILogger<LogInterceptor> _logger;
-
-        private const string SPLIT = ",";
 
         public LogInterceptor(ILogger<LogInterceptor> logger)
         {
@@ -32,7 +27,7 @@ namespace Common.Core.AOP.Log
 
             var activityName = GetActivityName(invocation.MethodInvocationTarget.GetCustomAttributes(typeof(LogTraceAttribute), false));
 
-            invocation.Proceed();
+            invocation.ProceedAsync();
 
             _logger.LogActivity(new ActivityLog()
             {
