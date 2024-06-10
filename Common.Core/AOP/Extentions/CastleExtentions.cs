@@ -41,7 +41,7 @@ public static class CastleExtentions
     {
         var resultType = invocation.Method.ReturnType.GetGenericArguments()[0];
         var mi = handleAsyncMethodInfo.MakeGenericMethod(resultType);
-        invocation.ReturnValue = mi.Invoke(null, new[] { invocation.ReturnValue });
+        invocation.ReturnValue = mi.Invoke(invocation.InvocationTarget, new[] { invocation.ReturnValue });
     }
 
     private static async Task HandleAsync(Task task)
