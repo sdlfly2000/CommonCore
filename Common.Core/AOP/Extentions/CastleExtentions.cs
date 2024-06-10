@@ -19,11 +19,17 @@ public static class CastleExtentions
     {
         var delegateType = GetDelegateType(invocation);
 
+        if (delegateType == MethodType.Synchronous)
+        {
+            invocation.Proceed();
+        }
+
         if (delegateType == MethodType.AsyncAction)
         {
             invocation.Proceed();
             invocation.ReturnValue = HandleAsync((Task)invocation.ReturnValue);
         }
+
         if (delegateType == MethodType.AsyncFunction)
         {
             invocation.Proceed();
