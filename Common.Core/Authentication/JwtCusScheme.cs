@@ -14,11 +14,10 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace Common.Core.Authentication
+namespace AuthService.Middlewares
 {
     public static class JwtCusScheme
     {
-
         public static AuthenticationBuilder AddJwtCusScheme(this AuthenticationBuilder builder, JWTOptions jwtOpt)
         {
             return builder.AddScheme<JwtBearerOptions, JwtCustomHandler>(JwtBearerDefaults.AuthenticationScheme, option =>
@@ -51,7 +50,6 @@ namespace Common.Core.Authentication
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            var remoteIpAdress = Context.Connection.RemoteIpAddress?.MapToIPv4().ToString();
             var userAgent = Request.Headers.UserAgent.ToString();
 
             var token = GetTokenBody(Request.Headers.Authorization.ToString()) as JObject;
@@ -61,7 +59,7 @@ namespace Common.Core.Authentication
                 return AuthenticateResult.NoResult();
             }
 
-            var cacheJwtKey = CreateKey(remoteIpAdress,
+            var cacheJwtKey = CreateKey(
                 token[ClaimTypes.NameIdentifier]?.Value<string>(),
                 token["exp"]?.Value<string>());
 
@@ -70,8 +68,7 @@ namespace Common.Core.Authentication
                 return AuthenticateResult.NoResult();
             }
 
-            if (remoteIpAdress != token[ClaimTypes.Uri]?.Value<string>()
-                || userAgent != token[ClaimTypes.UserData]?.Value<string>())
+            if (userAgent != token[ClaimTypes.UserData]?.Value<string>())
             {
                 return AuthenticateResult.NoResult();
             }
@@ -135,15 +132,15 @@ namespace Common.Core.Authentication
         private byte[] ConvertBase64ToObject(string base64)
         {
             if (base64.Length % 4 != 0)
-                base64 += new String('=', 4 - base64.Length % 4);
+                base64 += new string('=', 4 - base64.Length % 4);
 
             return Convert.FromBase64String(base64);
         }
 
-        private string CreateKey(string? ip, string? userId, string? timeStamp)
+        private string CreateKey(string? userId, string? timeStamp)
         {
-            return String.Join('|',
-                new string?[] { ip, userId, timeStamp }
+            return string.Join('|',
+                new string?[] { userId, timeStamp }
                     .Where(e => !e.IsNullOrEmpty())
                     .ToArray());
         }
