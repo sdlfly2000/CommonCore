@@ -3,7 +3,7 @@ param(
 	[string]$tempDirectory = ".",
 	[string]$username = "sdlfly2000",
 	[string]$password = "sdl@1215",
-	[string]$url = "ftp://homeserver/Projects/Configurations",
+	[string]$url = "ftp://homeserver2/Projects/Configurations",
 	[string]$configFileName = "app.json"
 )
 

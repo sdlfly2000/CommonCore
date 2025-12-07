@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <PackageId>IdeaActivator.Common.Core</PackageId>
     <Authors>IdeaActivator</Authors>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
@@ -9,7 +9,7 @@
     <Product>IdeaActivator.Common.Core</Product>
     <Description>This is the base core for products in Idea Activator.</Description>
     <Copyright>MIT</Copyright>
-    <Version>1.1.10</Version>
+    <Version>1.1.12</Version>
     <RepositoryUrl>https://github.com/sdlfly2000/CommonCore</RepositoryUrl>
     <RepositoryType>Dll</RepositoryType>
     <PackageProjectUrl>https://github.com/sdlfly2000/CommonCore</PackageProjectUrl>
