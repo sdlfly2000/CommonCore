@@ -9,7 +9,7 @@
     <Product>IdeaActivator.Common.Core</Product>
     <Description>This is the base core for products in Idea Activator.</Description>
     <Copyright>MIT</Copyright>
-    <Version>1.1.14</Version>
+    <Version>1.1.15</Version>
     <RepositoryUrl>https://github.com/sdlfly2000/CommonCore</RepositoryUrl>
     <RepositoryType>Dll</RepositoryType>
     <PackageProjectUrl>https://github.com/sdlfly2000/CommonCore</PackageProjectUrl>
@@ -33,5 +33,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.Core.AOP\Common.Core.AOP.csproj" />
+    <Content Include="bin\$(Configuration)\$(TargetFramework)\Common.Core.AOP.dll" Pack="true" PackagePath="lib\$(TargetFramework)\Common.Core.AOP.dll">
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+    </Content>
   </ItemGroup>
 </Project>
