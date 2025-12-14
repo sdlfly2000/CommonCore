@@ -1,5 +1,4 @@
-﻿using Common.Core.Authentication;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -14,7 +13,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 
-namespace AuthService.Middlewares
+namespace Common.Core.Authentication
 {
     public static class JwtCusScheme
     {
@@ -141,7 +140,7 @@ namespace AuthService.Middlewares
         {
             return string.Join('|',
                 new string?[] { userId, timeStamp }
-                    .Where(e => !e.IsNullOrEmpty())
+                    .Where(e => !string.IsNullOrEmpty(e))
                     .ToArray());
         }
 
