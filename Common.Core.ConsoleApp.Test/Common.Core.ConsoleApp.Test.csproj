@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common.Core\Common.Core.csproj" />
+    <ProjectReference Include="..\Common.Core.AOP\Common.Core.AOP.csproj" />
   </ItemGroup>
 
 </Project>

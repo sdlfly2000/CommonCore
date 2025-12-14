@@ -9,7 +9,7 @@
     <Product>IdeaActivator.Common.Core</Product>
     <Description>This is the base core for products in Idea Activator.</Description>
     <Copyright>MIT</Copyright>
-    <Version>1.1.13</Version>
+    <Version>1.1.14</Version>
     <RepositoryUrl>https://github.com/sdlfly2000/CommonCore</RepositoryUrl>
     <RepositoryType>Dll</RepositoryType>
     <PackageProjectUrl>https://github.com/sdlfly2000/CommonCore</PackageProjectUrl>
@@ -25,9 +25,13 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="Serilog" Version="4.3.0" />
     <PackageReference Include="SimpleInjector" Version="5.5.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Workflow\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Core.AOP\Common.Core.AOP.csproj" />
   </ItemGroup>
 </Project>
