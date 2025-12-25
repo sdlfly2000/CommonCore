@@ -21,7 +21,7 @@ namespace Common.Core.AOP.CatchException
             }
             catch(Exception e)
             {
-                var response = Activator.CreateInstance(ReturnType, e.Message);
+                var response = Activator.CreateInstance(ReturnType, e.Message, false);
                 context.ReturnValue = Task.FromResult(response);
             }
         }
