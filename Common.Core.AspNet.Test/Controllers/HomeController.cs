@@ -7,6 +7,7 @@ using Common.Core.Cache;
 using Common.Core.CQRS;
 using Common.Core.CQRS.Request;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading;
 
 namespace Common.Core.AspNet.Test.Controllers
 {
@@ -72,18 +73,18 @@ namespace Common.Core.AspNet.Test.Controllers
         }
 
         [HttpGet("Log")]
-        public IActionResult Log()
+        public IActionResult Log(CancellationToken cancellationToken)
         {
             var logRequest = new LogRequest("Test Log");
-            var response = _eventBus.Send<LogRequest, LogResponse>(logRequest);
+            var response = _eventBus.Send<LogRequest, LogResponse>(logRequest, cancellationToken);
             return Ok();
         }
 
         [HttpGet("Notification")]
-        public IActionResult Notification()
+        public IActionResult Notification(CancellationToken cancellationToken)
         {
             var notification = new LogNotification();
-            var responses = _eventBus.Publish<LogNotification, IResponse>(notification);
+            var responses = _eventBus.Publish<LogNotification, IResponse>(notification, cancellationToken);
             return Ok();
         }
 
