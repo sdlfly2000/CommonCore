@@ -15,7 +15,7 @@ namespace Common.Core.AspNet.Test.CQRS
             _logger = logger;
         }
 
-        public async Task<LogResponse> Handle(LogNotification request)
+        public async Task<LogResponse> Handle(LogNotification request, CancellationToken cancellationToken)
         {
             _logger.LogInformation("In Notification Handler 1");
             return await Task.FromResult(new LogResponse());

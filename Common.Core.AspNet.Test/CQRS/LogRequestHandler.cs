@@ -15,7 +15,7 @@ namespace Common.Core.AspNet.Test.CQRS
         }
 
         [LogTrace(nameof(LogRequestHandler))]
-        public async Task<LogResponse> Handle(LogRequest request)
+        public async Task<LogResponse> Handle(LogRequest request, CancellationToken cancellationToken)
         {
             _logger.LogInformation(request.Message);
             return await Task.FromResult(new LogResponse());

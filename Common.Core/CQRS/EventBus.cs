@@ -6,6 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Common.Core.CQRS
@@ -20,7 +21,7 @@ namespace Common.Core.CQRS
             _serviceProvider = serviceProvider;
         }
 
-        public async Task<List<IResponse>> Publish<TNotification, TResponse>(TNotification request)
+        public async Task<List<IResponse>> Publish<TNotification, TResponse>(TNotification request, CancellationToken cancellationToken)
             where TNotification : INotification
             where TResponse : IResponse
         {
@@ -34,19 +35,19 @@ namespace Common.Core.CQRS
             {
                 var service = _serviceProvider.GetRequiredService(handler) as dynamic;
 ;
-                responses.Add(await service?.Handle(request));
+                responses.Add(await service?.Handle(request, cancellationToken));
             }
 
             return responses.ToList();
         }
 
-        public async Task<TResponse> Send<TRequest, TResponse>(TRequest request)
+        public async Task<TResponse> Send<TRequest, TResponse>(TRequest request, CancellationToken cancellationToken)
             where TResponse : IResponse
             where TRequest : IRequest
         {
             var requestHandler = _serviceProvider.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
 
-            return await requestHandler.Handle(request);
+            return await requestHandler.Handle(request, cancellationToken).ConfigureAwait(false);
         }
     }
 }

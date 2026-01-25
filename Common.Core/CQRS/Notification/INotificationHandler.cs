@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace Common.Core.CQRS.Request
 {
     public interface INotificationHandler<in INotification, IResponse>
     {
-        Task<IResponse> Handle(INotification request);
+        Task<IResponse> Handle(INotification request, CancellationToken cancellationToken);
     }
 }
