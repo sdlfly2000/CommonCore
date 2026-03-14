@@ -9,7 +9,7 @@
     <Product>IdeaActivator.Common.Core</Product>
     <Description>This is the base core for products in Idea Activator.</Description>
     <Copyright>MIT</Copyright>
-    <Version>1.1.21</Version>
+    <Version>1.1.22</Version>
     <RepositoryUrl>https://github.com/sdlfly2000/CommonCore</RepositoryUrl>
     <RepositoryType>Dll</RepositoryType>
     <PackageProjectUrl>https://github.com/sdlfly2000/CommonCore</PackageProjectUrl>
@@ -18,20 +18,23 @@
   <ItemGroup>
     <PackageReference Include="Castle.Core" Version="5.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.3.9" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.9" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.3" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.3" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.3" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="10.0.5" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.5" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="Serilog" Version="4.3.1" />
-    <PackageReference Include="SimpleInjector" Version="5.5.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Workflow\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Common.Core.Shared\Common.Core.Shared.csproj" />
+    <Content Include="$(OutputPath)\Common.Core.Shared.dll">
+      <Pack>true</Pack>
+      <PackagePath>lib\$(TargetFramework)</PackagePath>
+    </Content>
   </ItemGroup>
 </Project>
