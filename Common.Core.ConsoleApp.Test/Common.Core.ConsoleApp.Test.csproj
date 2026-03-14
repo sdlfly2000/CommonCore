@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common.Core.AOP\Common.Core.AOP.csproj" />
+    <ProjectReference Include="..\Common.Core.Shared\Common.Core.Shared.csproj" />
   </ItemGroup>
 
 </Project>

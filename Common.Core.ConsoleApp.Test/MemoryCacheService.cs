@@ -1,6 +1,5 @@
 ﻿using Common.Core.Shared.Cache;
 using Microsoft.Extensions.Caching.Distributed;
-using System.Diagnostics;
 using System.Text.Json;
 
 namespace Common.Core.ConsoleApp.Test
