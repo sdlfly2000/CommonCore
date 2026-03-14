@@ -9,7 +9,7 @@
     <Product>IdeaActivator.Common.Core</Product>
     <Description>This is the base core for products in Idea Activator.</Description>
     <Copyright>MIT</Copyright>
-    <Version>1.1.20</Version>
+    <Version>1.1.21</Version>
     <RepositoryUrl>https://github.com/sdlfly2000/CommonCore</RepositoryUrl>
     <RepositoryType>Dll</RepositoryType>
     <PackageProjectUrl>https://github.com/sdlfly2000/CommonCore</PackageProjectUrl>
@@ -30,5 +30,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Workflow\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Core.Shared\Common.Core.Shared.csproj" />
   </ItemGroup>
 </Project>

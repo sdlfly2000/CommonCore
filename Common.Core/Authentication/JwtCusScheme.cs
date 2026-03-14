@@ -1,17 +1,18 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Common.Core.Shared.Cache;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Linq;
 using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace Common.Core.Authentication
 {
@@ -39,18 +40,18 @@ namespace Common.Core.Authentication
 
     public class JwtCustomHandler : JwtBearerHandler
     {
-        private readonly IMemoryCache _memoryCache;
+        private readonly IMemoryCacheService _memoryCacheService;
 
-        public JwtCustomHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock, IMemoryCache memoryCache)
-            : base(options, logger, encoder, clock)
+        public JwtCustomHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger, UrlEncoder encoder, IMemoryCacheService memoryCacheService)
+            : base(options, logger, encoder)
         {
-            _memoryCache = memoryCache;
+            _memoryCacheService = memoryCacheService;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
         {
+            var cancellationToken = CancellationToken.None;
             var userAgent = Request.Headers.UserAgent.ToString();
-
             var token = GetTokenBody(Request.Headers.Authorization.ToString()) as JObject;
 
             if (token == null)
@@ -62,7 +63,7 @@ namespace Common.Core.Authentication
                 token[ClaimTypes.NameIdentifier]?.Value<string>(),
                 token["exp"]?.Value<string>());
 
-            if (!IsActicatedOrEmpty(cacheJwtKey))
+            if ((await IsActicatedOrEmpty(cacheJwtKey, cancellationToken).ConfigureAwait(false)) == false)
             {
                 return AuthenticateResult.NoResult();
             }
@@ -76,13 +77,7 @@ namespace Common.Core.Authentication
 
             if (authResult.Succeeded)
             {
-                var isValid = _memoryCache.GetOrCreate(cacheJwtKey,
-                    (entry) =>
-                    {
-                        entry.SetValue(true);
-                        entry.SetSlidingExpiration(TimeSpan.FromDays(1));
-                        return true;
-                    });
+                _ = await _memoryCacheService.Upsert<bool>(cacheJwtKey, true, TimeSpan.FromHours(12), CancellationToken.None).ConfigureAwait(false);
             }
 
             Context.Items.Add("CacheJwtKey", cacheJwtKey);
@@ -92,11 +87,12 @@ namespace Common.Core.Authentication
 
         #region Private Methods
 
-        private bool IsActicatedOrEmpty(string cacheKey)
+        private async Task<bool> IsActicatedOrEmpty(string cacheKey, CancellationToken token)
         {
-            if (_memoryCache.TryGetValue(cacheKey, out var isValid))
+            var result = await _memoryCacheService.GetValue<bool>(cacheKey, token).ConfigureAwait(false);
+            if (result.Success)
             {
-                if ((bool)isValid! == false)
+                if (result.CachedValue == false)
                 {
                     return false;
                 }
