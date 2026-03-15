@@ -26,6 +26,11 @@ namespace Common.Core.ConsoleApp.Test
             return (true, cachedValue);
         }
 
+        public Task<bool> InsertIfNotExist<T>(string cacheKeyUnique, T jsonValue, TimeSpan expire, CancellationToken? token)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<bool> Upsert<T>(string cacheKeyUnique, T jsonValue, TimeSpan expire, CancellationToken? token)
         {
             await _redisCache.SetStringAsync(cacheKeyUnique, JsonSerializer.Serialize(jsonValue), new DistributedCacheEntryOptions
