@@ -40,12 +40,15 @@ namespace Common.Core.Authentication
 
     public class JwtCustomHandler : JwtBearerHandler
     {
+        private const int LiveTimeMin = 60;
         private readonly IMemoryCacheService _memoryCacheService;
+        private readonly IOptions<JWTOptions> _jwtOptions;
 
-        public JwtCustomHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger, UrlEncoder encoder, IMemoryCacheService memoryCacheService)
+        public JwtCustomHandler(IOptionsMonitor<JwtBearerOptions> options, ILoggerFactory logger, UrlEncoder encoder, IMemoryCacheService memoryCacheService, IOptions<JWTOptions> jwtOptions)
             : base(options, logger, encoder)
         {
             _memoryCacheService = memoryCacheService;
+            _jwtOptions = jwtOptions;
         }
 
         protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
@@ -53,6 +56,7 @@ namespace Common.Core.Authentication
             var cancellationToken = CancellationToken.None;
             var userAgent = Request.Headers.UserAgent.ToString();
             var token = GetTokenBody(Request.Headers.Authorization.ToString()) as JObject;
+            var liveTimeMin = _jwtOptions.Value.LiveTimeMin == 0 ? LiveTimeMin : _jwtOptions.Value.LiveTimeMin;
 
             if (token == null)
             {
@@ -77,7 +81,7 @@ namespace Common.Core.Authentication
 
             if (authResult.Succeeded)
             {
-                _ = await _memoryCacheService.Upsert<bool>(cacheJwtKey, true, TimeSpan.FromHours(12), CancellationToken.None).ConfigureAwait(false);
+                _ = await _memoryCacheService.Upsert<bool>(cacheJwtKey, true, TimeSpan.FromHours(liveTimeMin), CancellationToken.None).ConfigureAwait(false);
             }
 
             Context.Items.Add("CacheJwtKey", cacheJwtKey);

@@ -5,5 +5,6 @@
         public string Issuer { get; set; }
         public string SigningKey { get; set; }
         public int ExpireSeconds { get; set; }
+        public int LiveTimeMin { get; set; }
     }
 }
