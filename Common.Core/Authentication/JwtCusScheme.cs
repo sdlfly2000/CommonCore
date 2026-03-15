@@ -81,7 +81,7 @@ namespace Common.Core.Authentication
 
             if (authResult.Succeeded)
             {
-                _ = await _memoryCacheService.Upsert<bool>(cacheJwtKey, true, TimeSpan.FromHours(liveTimeMin), CancellationToken.None).ConfigureAwait(false);
+                _ = await _memoryCacheService.Upsert<bool>(cacheJwtKey, true, TimeSpan.FromMinutes(liveTimeMin), CancellationToken.None).ConfigureAwait(false);
             }
 
             Context.Items.Add("CacheJwtKey", cacheJwtKey);
