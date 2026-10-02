@@ -53,7 +53,11 @@ namespace Common.Core.AOP.LogTrace
                     throw;
                 }
 
-                var response = Activator.CreateInstance(ReturnType, requestContext?.TraceId, false, ex.Message);
+                var response = Activator.CreateInstance(ReturnType, 
+                            requestContext?.TraceId != null
+                                ? Guid.Parse(requestContext.TraceId)
+                                : Guid.Empty,
+                            false, ex.Message);
                 context.ReturnValue = Task.FromResult(response);
             }
             finally
